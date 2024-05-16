@@ -15,19 +15,6 @@ struct NganhQueryPayload {
     id: String,
 }
 
-#[derive(Deserialize)]
-struct NganhCreatePayload {
-    id: String,
-    ten: String,
-    id_khoa: String,
-}
-
-#[derive(Deserialize)]
-struct NganhModifyPayload {
-    id: String,
-    ten: String,
-}
-
 pub fn method_router() -> axum::routing::MethodRouter<Context> {
     axum::routing::get(get)
 }

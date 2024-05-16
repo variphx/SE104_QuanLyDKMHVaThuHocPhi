@@ -1,15 +1,18 @@
 use axum::{extract::State, Json};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
+#[derive(Serialize, sqlx::FromRow)]
 struct MonHocMo {
     id_mon_hoc: String,
     id_chuong_trinh_hoc: String,
 }
 
 #[derive(Deserialize)]
-struct MonHocMoQueryPayload {}
+struct MonHocMoQueryPayload {
+    id_sinh_vien: String,
+}
 
 #[derive(Deserialize)]
 struct MonHocMoCreatePayload {
@@ -21,16 +24,35 @@ pub fn method_router() -> axum::routing::MethodRouter<Context> {
     axum::routing::get(get).post(post).delete(delete)
 }
 
-async fn get(State(context): State<Context>, Json(payload): Json<MonHocMoQueryPayload>) {}
+async fn get(
+    State(context): State<Context>,
+    Json(payload): Json<MonHocMoQueryPayload>,
+) -> Json<Vec<MonHocMo>> {
+    let mon_hoc_mos = sqlx::query_as::<_, MonHocMo>(
+        "SELECT MON_HOC_MO.id_mon_hoc, MON_HOC_MO.id_chuong_trinh_hoc FROM MON_HOC_MO, SINH_VIEN
+            WHERE MON_HOC_MO.id_chuong_trinh_hoc = SINH_VIEN.id_chuong_trinh_hoc
+                AND SINH_VIEN.id = $1",
+    )
+    .bind(&payload.id_sinh_vien)
+    .fetch_all(context.pool())
+    .await
+    .unwrap();
+
+    Json(mon_hoc_mos)
+}
 
 async fn post(State(context): State<Context>, Json(payload): Json<MonHocMoCreatePayload>) {
+    let id = format!("{}{}", payload.id_chuong_trinh_hoc, payload.id_mon_hoc);
+
     sqlx::query(
-        "INSERT INTO MON_HOC_MO (id_mon_hoc, id_chuong_trinh_hoc)
+        "INSERT INTO MON_HOC_MO (id, id_mon_hoc, id_chuong_trinh_hoc)
             VALUES (
                 $1,
-                $2
+                $2,
+                $3
             )",
     )
+    .bind(id)
     .bind(payload.id_mon_hoc)
     .bind(payload.id_chuong_trinh_hoc)
     .execute(context.pool())

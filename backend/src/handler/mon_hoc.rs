@@ -101,6 +101,7 @@ async fn patch(
     )
     .bind(payload.ten)
     .bind(payload.so_tiet)
+    .bind(id)
     .execute(context.pool())
     .await
     .unwrap();
