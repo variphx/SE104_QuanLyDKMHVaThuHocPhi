@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
+pub mod mo;
+
 #[derive(Serialize, sqlx::FromRow)]
 struct MonHoc {
     id: String,
@@ -25,8 +27,17 @@ struct MonHocQueryPayload {
     id: String,
 }
 
+#[derive(Deserialize)]
+struct MonHocModifyPayload {
+    id: String,
+    payload: MonHocCreatePayload,
+}
+
 pub fn method_router() -> axum::routing::MethodRouter<Context> {
-    todo!()
+    axum::routing::get(get)
+        .post(post)
+        .patch(patch)
+        .delete(delete)
 }
 
 async fn get(
@@ -80,5 +91,28 @@ async fn post(State(context): State<Context>, Json(payload): Json<MonHocCreatePa
 
 async fn patch(
     State(context): State<Context>,
-    Json(payload): Json<
-)
+    Json(MonHocModifyPayload { id, payload }): Json<MonHocModifyPayload>,
+) {
+    sqlx::query(
+        "UPDATE MON_HOC
+            SET ten = $1,
+                so_tiet = $2
+            WHERE id = $3",
+    )
+    .bind(payload.ten)
+    .bind(payload.so_tiet)
+    .execute(context.pool())
+    .await
+    .unwrap();
+}
+
+async fn delete(State(context): State<Context>, Json(payload): Json<MonHocQueryPayload>) {
+    sqlx::query(
+        "DELETE FROM MON_HOC
+            WHERE id = $1",
+    )
+    .bind(payload.id)
+    .execute(context.pool())
+    .await
+    .unwrap();
+}

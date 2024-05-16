@@ -22,7 +22,7 @@ CREATE TABLE
     DOI_TUONG (
         id TEXT,
         ten TEXT NOT NULL,
-        mien_giam DOUBLE PRECISION NOT NULL,
+        he_so_hoc_phi DOUBLE PRECISION NOT NULL,
         PRIMARY KEY (id)
     );
 
@@ -41,6 +41,11 @@ CREATE TABLE
         FOREIGN KEY (id) REFERENCES DOI_TUONG (id),
         FOREIGN KEY (id_thanh_pho) REFERENCES THANH_PHO (id)
     );
+
+INSERT INTO
+    DOI_TUONG (id, ten, he_so_hoc_phi)
+VALUES
+    ('default', 'Đối tượng phổ thông', 1.0);
 
 CREATE TABLE
     KHOA (id TEXT, ten TEXT NOT NULL, PRIMARY KEY (id));
@@ -143,13 +148,30 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    HOC_PHI (
+    DANG_KY_MON_HOC (
         id TEXT,
-        tong BIGINT NOT NULL,
+        id_sinh_vien TEXT NOT NULL,
+        id_hoc_ky TEXT NOT NULL,
+        PRIMARY KEY (id),
+        UNIQUE (id_sinh_vien, id_hoc_ky)
+    );
+
+CREATE TABLE
+    CHI_TIET_DANG_KY_MON_HOC (
+        id_dang_ky_mon_hoc TEXT NOT NULL,
+        id_mon_hoc_mo TEXT NOT NULL,
+        PRIMARY KEY (id_dang_ky_mon_hoc, id_mon_hoc_mo),
+        FOREIGN KEY (id_mon_hoc_mo) REFERENCES MON_HOC_MO (id),
+        FOREIGN KEY (id_dang_ky_mon_hoc) REFERENCES DANG_KY_MON_HOC (id)
+    );
+
+CREATE TABLE
+    HOC_PHI (
+        tong DOUBLE PRECISION NOT NULL,
         da_thanh_toan BIGINT NOT NULL,
         id_hoc_ky TEXT NOT NULL,
         id_sinh_vien TEXT NOT NULL,
-        PRIMARY KEY (id),
+        PRIMARY KEY (id_sinh_vien, id_hoc_ky),
         FOREIGN KEY (id_hoc_ky) REFERENCES HOC_KY (id),
         FOREIGN KEY (id_sinh_vien) REFERENCES SINH_VIEN (id)
     );
@@ -158,5 +180,20 @@ CREATE TABLE
     THAM_SO (
         id SMALLINT PRIMARY KEY,
         nam_hoc INT NOT NULL,
-        gia_tin_chi BIGINT NOT NULL
+        gia_tin_chi_lt BIGINT NOT NULL,
+        gia_tin_chi_th BIGINT NOT NULL,
+        sinh_vien_len INT NOT NULL,
+        nam_hoc_current INT NOT NULL
     );
+
+INSERT INTO
+    THAM_SO (
+        id,
+        nam_hoc,
+        gia_tin_chi_lt,
+        gia_tin_chi_th,
+        sinh_vien_len,
+        nam_hoc_current
+    )
+VALUES
+    (1, 0, 0, 0, 0, 0);

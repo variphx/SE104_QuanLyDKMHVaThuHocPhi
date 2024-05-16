@@ -21,12 +21,6 @@ struct HocKyCreatePayload {
     nam_hoc: i64,
 }
 
-struct HocKyModifyPayload {
-    id: String,
-    ten: Option<String>,
-    nam_hoc: Option<i64>,
-}
-
 pub fn method_router() -> axum::routing::MethodRouter<Context> {
     axum::routing::get(get).post(post).delete(delete)
 }

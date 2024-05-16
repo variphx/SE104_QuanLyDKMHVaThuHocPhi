@@ -44,6 +44,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .route("/vung-mien", handler::doi_tuong::vung_mien::method_router()),
         )
         .route("/hoc-ky", handler::hoc_ky::method_router())
+        .route("/hoc-phi", handler::hoc_phi::method_router())
         .route("/khoa", handler::khoa::method_router())
         .route("/mon-hoc", handler::mon_hoc::method_router())
         .route("/nganh", handler::nganh::method_router())
