@@ -27,6 +27,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tokio::net::TcpListener::bind(address).await?
     };
 
+    let state = Context::new(db_pool);
+
     // tạo router cho api
     let api = Router::new()
         .route(
@@ -47,16 +49,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/hoc-phi", handler::hoc_phi::method_router())
         .route("/khoa", handler::khoa::method_router())
         .route("/mon-hoc", handler::mon_hoc::method_router())
-        .nest(
-            "/mon-hoc",
-            Router::new().route("/mo", handler::mon_hoc::mo::method_router()),
-        )
+        .route("/mon-hoc-mo", todo!())
         .route("/nganh", handler::nganh::method_router())
-        .route("/que-quan", handler::que_quan::method_router())
-        .route("/sinh-vien", handler::sinh_vien::method_router())
-        .route("/user", handler::user::method_router());
-
-    let state = Context::new(db_pool);
+        // .route("/que-quan", handler::que_quan::method_router())
+        // .route("/sinh-vien", handler::sinh_vien::method_router())
+        .merge(handler::sinh_vien::router(state.clone()))
+        .route("/user", handler::user::method_router())
+        .nest(
+            "/user",
+            Router::new().route("/session", handler::user::session::method_router()),
+        );
 
     // nest api vào app
     let app = Router::new()
