@@ -1,25 +1,15 @@
-<script lang="ts">
-    interface LoginPayload {
-        username: String;
-        password: String;
-    }
+<!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 
-    let login_payload: LoginPayload = {
-        username: "22520278",
-        password: "password",
-    };
-
-    async function handleSubmit() {
-        const result = await fetch("http://localhost:8080/api/user/session", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(login_payload),
-        }).then((result) => result.json());
-
-        console.log(result["is_success"]);
-    }
-</script>
-
-<button on:click|preventDefault={handleSubmit}> Click Here to test </button>
+<div class="container h-full mx-auto flex justify-center items-center">
+	<div class="space-y-5">
+		<h1 class="h1">Let's get cracking bones!</h1>
+		<p>Start by exploring:</p>
+		<ul>
+			<li><code class="code">/src/routes/+layout.svelte</code> - barebones layout</li>
+			<li><code class="code">/src/app.postcss</code> - app wide css</li>
+			<li>
+				<code class="code">/src/routes/+page.svelte</code> - this page, you can replace the contents
+			</li>
+		</ul>
+	</div>
+</div>
