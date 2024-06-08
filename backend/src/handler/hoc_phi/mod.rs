@@ -1,11 +1,7 @@
-use axum::{extract::State, Json};
+use axum::{extract::State, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
-
-mod get;
-mod patch;
-mod post;
 
 #[derive(Serialize, sqlx::FromRow)]
 struct HocPhi {
@@ -27,8 +23,11 @@ struct HocPhiCreatePayload {
     id_hoc_ky: String,
 }
 
-pub fn method_router() -> axum::routing::MethodRouter<Context> {
-    axum::routing::get(get).post(post)
+pub fn router() -> Router<Context> {
+    // axum::routing::get(get).post(post)
+    Router::new()
+        .route("/get", axum::routing::post(get))
+        .route("/post", axum::routing::post(post))
 }
 
 async fn get(

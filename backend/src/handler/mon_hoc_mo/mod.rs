@@ -1,12 +1,7 @@
-use axum::{extract::State, Json};
+use axum::{extract::State, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
-
-mod get;
-mod post;
-mod patch;
-mod delete;
 
 #[derive(Serialize, sqlx::FromRow)]
 struct MonHocMo {
@@ -25,8 +20,11 @@ struct MonHocMoCreatePayload {
     id_chuong_trinh_hoc: String,
 }
 
-pub fn method_router() -> axum::routing::MethodRouter<Context> {
-    axum::routing::get(get).post(post).delete(delete)
+pub fn router() -> Router<Context> {
+    Router::new()
+        .route("/get", axum::routing::post(get))
+        .route("/post", axum::routing::post(post))
+        .route("/delete", axum::routing::post(delete))
 }
 
 async fn get(

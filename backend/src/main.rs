@@ -31,25 +31,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // tạo router cho api
     let api = Router::new()
-        .route(
-            "/chuong-trinh-hoc",
-            handler::chuong_trinh_hoc::method_router(),
-        )
-        .route("/doi-tuong", handler::doi_tuong::method_router())
-        .nest(
-            "/doi-tuong",
-            Router::new()
-                .route(
-                    "/chinh-sach",
-                    handler::doi_tuong::chinh_sach::method_router(),
-                )
-                .route("/vung-mien", handler::doi_tuong::vung_mien::method_router()),
-        )
-        .route("/hoc-ky", handler::hoc_ky::method_router())
-        .route("/hoc-phi", handler::hoc_phi::method_router())
-        .route("/khoa", handler::khoa::method_router())
-        .route("/mon-hoc", handler::mon_hoc::method_router())
-        // .route("/mon-hoc-mo")
+        .nest("/chuong-trinh-hoc", handler::chuong_trinh_hoc::router())
+        .nest("/doi-tuong", handler::doi_tuong::router())
+        .nest("/hoc-ky", handler::hoc_ky::router())
+        .nest("/hoc-phi", handler::hoc_phi::router())
+        .nest("/mon-hoc", handler::mon_hoc::router())
+        .nest("/mon-hoc-mo", handler::mon_hoc_mo::router())
         .route("/nganh", handler::nganh::method_router())
         // .route("/que-quan", handler::que_quan::method_router())
         .route("/sinh-vien", handler::sinh_vien::method_router())

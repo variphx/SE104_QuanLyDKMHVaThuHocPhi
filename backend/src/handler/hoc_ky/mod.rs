@@ -1,11 +1,7 @@
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{extract::State, http::StatusCode, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
-
-mod delete;
-mod get;
-mod post;
 
 #[derive(Serialize, sqlx::FromRow)]
 struct HocKy {
@@ -25,8 +21,11 @@ struct HocKyCreatePayload {
     nam_hoc: i64,
 }
 
-pub fn method_router() -> axum::routing::MethodRouter<Context> {
-    axum::routing::get(get).post(post).delete(delete)
+pub fn router() -> Router<Context> {
+    Router::new()
+        .route("/get", axum::routing::post(get))
+        .route("/post", axum::routing::post(post))
+        .route("/delete", axum::routing::post(delete))
 }
 
 async fn get(

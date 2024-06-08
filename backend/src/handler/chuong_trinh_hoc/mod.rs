@@ -1,12 +1,7 @@
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{extract::State, http::StatusCode, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
-
-mod delete;
-mod get;
-mod post;
-mod patch;
 
 #[derive(Serialize, sqlx::FromRow)]
 struct ChuongTrinhHoc {
@@ -26,8 +21,10 @@ struct ChuongTrinhHocQueryPayload {
     id: String,
 }
 
-pub fn method_router() -> axum::routing::MethodRouter<Context> {
-    axum::routing::get(get).post(post)
+pub fn router() -> Router<Context> {
+    Router::new()
+        .route("/get", axum::routing::post(get))
+        .route("/post", axum::routing::post(post))
 }
 
 async fn get(

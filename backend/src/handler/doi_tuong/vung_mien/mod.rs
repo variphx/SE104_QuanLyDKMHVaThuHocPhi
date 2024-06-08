@@ -3,20 +3,14 @@ use serde::Deserialize;
 
 use crate::context::Context;
 
-mod post;
-
 #[derive(Deserialize)]
-struct DoiTuongVungMienCreatePayload {
+pub struct DoiTuongVungMienCreatePayload {
     id_thanh_pho: String,
     ten: String,
     mien_giam: f64,
 }
 
-pub fn method_router() -> axum::routing::MethodRouter<Context> {
-    axum::routing::post(post)
-}
-
-async fn post(
+pub async fn post(
     State(context): State<Context>,
     Json(payload): Json<DoiTuongVungMienCreatePayload>,
 ) -> Result<(), ()> {

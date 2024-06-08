@@ -1,12 +1,7 @@
-use axum::{extract::State, Json};
+use axum::{extract::State, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
-
-mod delete;
-mod get;
-mod patch;
-mod post;
 
 #[derive(Serialize, sqlx::FromRow)]
 struct MonHoc {
@@ -36,11 +31,17 @@ struct MonHocModifyPayload {
     payload: MonHocCreatePayload,
 }
 
-pub fn method_router() -> axum::routing::MethodRouter<Context> {
-    axum::routing::get(get)
-        .post(post)
-        .patch(patch)
-        .delete(delete)
+pub fn router() -> Router<Context> {
+    // axum::routing::get(get)
+    //     .post(post)
+    //     .patch(patch)
+    //     .delete(delete)
+
+    Router::new()
+        .route("/get", axum::routing::post(get))
+        .route("/post", axum::routing::post(post))
+        .route("/patch", axum::routing::post(patch))
+        .route("/delete", axum::routing::post(delete))
 }
 
 async fn get(
