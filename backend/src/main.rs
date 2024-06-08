@@ -37,14 +37,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .nest("/hoc-phi", handler::hoc_phi::router())
         .nest("/mon-hoc", handler::mon_hoc::router())
         .nest("/mon-hoc-mo", handler::mon_hoc_mo::router())
-        .route("/nganh", handler::nganh::method_router())
-        // .route("/que-quan", handler::que_quan::method_router())
-        .route("/sinh-vien", handler::sinh_vien::method_router())
-        .route("/user", handler::user::method_router())
-        .nest(
-            "/user",
-            Router::new().route("/session", handler::user::session::method_router()),
-        );
+        // .route("/que-quan", handler::que_quan::method_router()j
+        .nest("/sinh-vien", handler::sinh_vien::router())
+        .nest("/user", handler::user::router());
 
     // nest api vào app
     let app = Router::new()

@@ -3,15 +3,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
-mod delete;
-mod get;
-mod patch;
-mod post;
-
-pub const fn router(State(context): State<Context>) -> Router<State<Context>> {
-    todo!()
-}
-
 #[derive(Serialize, sqlx::FromRow)]
 struct SinhVien {
     id: String,
@@ -50,11 +41,12 @@ struct SinhVienModifyPayload {
     payload: SinhVienCreatePayload,
 }
 
-pub fn method_router() -> axum::routing::MethodRouter<Context> {
-    axum::routing::get(get)
-        .post(post)
-        .patch(patch)
-        .delete(delete)
+pub fn router() -> Router<Context> {
+    Router::new()
+        .route("/get", axum::routing::post(get))
+        .route("/post", axum::routing::post(post))
+        .route("/patch", axum::routing::post(patch))
+        .route("/delete", axum::routing::post(delete))
 }
 
 async fn get(

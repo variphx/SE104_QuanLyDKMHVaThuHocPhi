@@ -1,11 +1,9 @@
-use argon2::{password_hash::SaltString, Argon2, PasswordHasher};
-use axum::{extract::State, http::StatusCode, Json};
+use argon2::{password_hash::SaltString, Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use axum::{extract::State, http::StatusCode, Json, Router};
 use rand::rngs::OsRng;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
-
-pub mod session;
 
 #[derive(Deserialize)]
 struct User {
@@ -13,8 +11,45 @@ struct User {
     password: String,
 }
 
-pub fn method_router() -> axum::routing::MethodRouter<Context> {
-    axum::routing::post(post).patch(patch).delete(delete)
+#[derive(Deserialize)]
+struct UserLoginPayload {
+    username: String,
+    password: String,
+}
+
+#[derive(Serialize)]
+struct SessionCreateResponse {
+    is_success: bool,
+}
+
+pub fn router() -> Router<Context> {
+    Router::new()
+        .route("/get", axum::routing::post(get))
+        .route("/post", axum::routing::post(post))
+        .route("/patch", axum::routing::post(patch))
+        .route("/delete", axum::routing::post(delete))
+}
+
+async fn get(
+    State(context): State<Context>,
+    Json(UserLoginPayload { username, password }): Json<UserLoginPayload>,
+) -> Json<SessionCreateResponse> {
+    let password_hash = sqlx::query_scalar::<_, String>(
+        "SELECT password FROM USERS
+            WHERE username = $1",
+    )
+    .bind(username)
+    .fetch_one(context.pool())
+    .await
+    .unwrap();
+
+    let parsed_hash = PasswordHash::new(&password_hash).unwrap();
+    let argon2 = Argon2::default();
+
+    match argon2.verify_password(password.as_bytes(), &parsed_hash) {
+        Ok(()) => Json(SessionCreateResponse { is_success: true }),
+        Err(_) => Json(SessionCreateResponse { is_success: false }),
+    }
 }
 
 async fn post(State(context): State<Context>, Json(user): Json<User>) -> Result<(), StatusCode> {
