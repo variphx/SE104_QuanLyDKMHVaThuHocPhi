@@ -13,9 +13,23 @@
 
   async function submitHandler() {
     const session_create_result = await fetch(
-      "http://localhost:8080/api/user/session/post",
-    );
-    await goto("/admin");
+      "http://localhost:8080/api/user/get",
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+    )
+      .then((result) => result.json())
+      .catch((err) => console.log(err));
+
+    if (session_create_result["is_success"]) {
+      await goto("/admin");
+    } else {
+      alert("Wrong password");
+    }
   }
 </script>
 

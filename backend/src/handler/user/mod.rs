@@ -34,14 +34,17 @@ async fn get(
     State(context): State<Context>,
     Json(UserLoginPayload { username, password }): Json<UserLoginPayload>,
 ) -> Json<SessionCreateResponse> {
-    let password_hash = sqlx::query_scalar::<_, String>(
+    let password_hash = match sqlx::query_scalar::<_, String>(
         "SELECT password FROM USERS
             WHERE username = $1",
     )
     .bind(username)
     .fetch_one(context.pool())
     .await
-    .unwrap();
+    {
+        Ok(password_hash) => password_hash,
+        Err(_) => return Json(SessionCreateResponse { is_success: false }),
+    };
 
     let parsed_hash = PasswordHash::new(&password_hash).unwrap();
     let argon2 = Argon2::default();
