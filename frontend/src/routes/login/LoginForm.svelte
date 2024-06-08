@@ -1,7 +1,20 @@
-<script>
+<script lang="ts">
   import { goto } from "$app/navigation";
 
+  interface SessionCreatePayload {
+    username: String;
+    password: String;
+  }
+
+  let payload: SessionCreatePayload = {
+    username: "",
+    password: "",
+  };
+
   async function submitHandler() {
+    const session_create_result = await fetch(
+      "http://localhost:8080/api/user/session/post",
+    );
     await goto("/admin");
   }
 </script>
@@ -12,12 +25,12 @@
 >
   <label class="label mb-4">
     <span class="mb-2"> Mã công chức/sinh viên </span>
-    <input type="text" class="input" />
+    <input type="text" class="input" bind:value={payload.username} />
   </label>
 
   <label class="label mb-4">
     <span class="mb-2"> Mật khẩu </span>
-    <input type="password" class="input" />
+    <input type="password" class="input" bind:value={payload.password} />
   </label>
 
   <button type="submit" class="btn variant-filled-primary"> Đăng nhập </button>
