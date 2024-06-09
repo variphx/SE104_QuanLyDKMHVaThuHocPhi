@@ -37,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .nest("/hoc-phi", handler::hoc_phi::router())
         .nest("/mon-hoc", handler::mon_hoc::router())
         .nest("/mon-hoc-mo", handler::mon_hoc_mo::router())
-        // .route("/que-quan", handler::que_quan::method_router()j
+        .nest("/que-quan", handler::que_quan::router())
         .nest("/sinh-vien", handler::sinh_vien::router())
         .nest("/user", handler::user::router());
 
