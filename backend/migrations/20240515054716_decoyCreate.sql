@@ -80,3 +80,24 @@ INSERT INTO
     NGANH (id, id_khoa, ten)
 VALUES
     ('CSCQ', 'CS', 'Khoa học Máy tính (Chính quy)');
+
+INSERT INTO
+    HOC_KY (id, ten, nam_hoc)
+VALUES
+    ('202201', 'Một', 2022);
+
+INSERT INTO
+    THAM_SO (
+        id,
+        gia_tin_chi_lt,
+        gia_tin_chi_th,
+        sinh_vien_len,
+        id_hoc_ky_hien_tai
+    )
+VALUES
+    (1, 0, 0, 0, '202201');
+
+INSERT INTO 
+    CHUONG_TRINH_HOC (id, id_nganh, id_hoc_ky)
+VALUES
+    ('CSCQ202201', 'CSCQ', '202201');

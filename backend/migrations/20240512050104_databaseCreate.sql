@@ -65,9 +65,9 @@ CREATE TABLE
 INSERT INTO
     TEN_HOC_KY
 VALUES
-    ('Mot'),
+    ('Một'),
     ('Hai'),
-    ('He');
+    ('Hè');
 
 CREATE TABLE
     HOC_KY (
@@ -179,21 +179,10 @@ CREATE TABLE
 CREATE TABLE
     THAM_SO (
         id SMALLINT PRIMARY KEY,
-        nam_hoc INT NOT NULL,
         gia_tin_chi_lt BIGINT NOT NULL,
         gia_tin_chi_th BIGINT NOT NULL,
         sinh_vien_len INT NOT NULL,
-        nam_hoc_current INT NOT NULL
+        id_hoc_ky_hien_tai TEXT NOT NULL,
+        FOREIGN KEY (id_hoc_ky_hien_tai) REFERENCES HOC_KY (id)
     );
 
-INSERT INTO
-    THAM_SO (
-        id,
-        nam_hoc,
-        gia_tin_chi_lt,
-        gia_tin_chi_th,
-        sinh_vien_len,
-        nam_hoc_current
-    )
-VALUES
-    (1, 0, 0, 0, 0, 0);

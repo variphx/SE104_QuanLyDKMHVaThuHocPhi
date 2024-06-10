@@ -69,17 +69,16 @@ async fn post(
     State(context): State<Context>,
     Json(payload): Json<SinhVienCreatePayload>,
 ) -> Result<(), StatusCode> {
-    let id = {
-        let nam_hoc = sqlx::query_scalar::<_, i32>(
-            "SELECT nam_hoc_current FROM THAM_SO
+    let sinh_vien_len = sqlx::query_scalar::<_, i32>(
+        "SELECT sinh_vien_len FROM THAM_SO
                 WHERE id = 1",
-        )
-        .fetch_one(context.pool())
-        .await
-        .unwrap();
-
-        let sinh_vien_len = sqlx::query_scalar::<_, i32>(
-            "SELECT sinh_vien_len FROM THAM_SO
+    )
+    .fetch_one(context.pool())
+    .await
+    .unwrap();
+    let id = {
+        let nam_hoc = sqlx::query_scalar::<_, String>(
+            "SELECT id_hoc_ky_hien_tai FROM THAM_SO
                 WHERE id = 1",
         )
         .fetch_one(context.pool())
@@ -93,7 +92,7 @@ async fn post(
         &payload.ngay_sinh,
         time::macros::format_description!("[year]-[month]-[day]"),
     )
-    .map_err(|_| StatusCode::BAD_REQUEST)?;
+    .unwrap();
 
     sqlx::query(
         "INSERT INTO SINH_VIEN (
@@ -131,6 +130,16 @@ async fn post(
     .bind(&payload.id_que_quan)
     .bind(&payload.id_doi_tuong)
     .bind(&payload.id_chuong_trinh_hoc)
+    .execute(context.pool())
+    .await
+    .unwrap();
+
+    sqlx::query(
+        "UPDATE THAM_SO
+                SET sinh_vien_len = $1
+                WHERE id = 1",
+    )
+    .bind(sinh_vien_len + 1)
     .execute(context.pool())
     .await
     .unwrap();

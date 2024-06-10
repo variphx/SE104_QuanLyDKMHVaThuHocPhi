@@ -1,5 +1,12 @@
 <script lang="ts">
+  import {
+    getToastStore,
+    initializeStores,
+    type ToastSettings,
+  } from "@skeletonlabs/skeleton";
   import { onMount } from "svelte";
+
+  const toastStore = getToastStore();
 
   interface SinhVienCreatePayload {
     ten: string;
@@ -42,6 +49,7 @@
   let id_que_quan: string = "";
 
   $: payload.id_que_quan = id_que_quan;
+  $: payload.id_chuong_trinh_hoc = id_nganh + id_hoc_ky;
 
   let que_quans: QueQuan[] = [];
   let nganhs: Nganh[] = [];
@@ -92,7 +100,14 @@
       body: JSON.stringify(payload),
     });
 
-    if (!request.ok) {
+    if (request.ok) {
+      const toast: ToastSettings = {
+        message: "Tạo sinh viên thành công!",
+        timeout: 3000,
+      };
+
+      toastStore.trigger(toast);
+    } else {
       throw new Error(request.statusText);
     }
   }
@@ -146,7 +161,8 @@
   <div class="flex flex-col">
     <button
       type="submit"
-      class="mt-2 btn w-1/2 md:w-1/3 mx-auto variant-glass-primary">Tạo hồ sơ</button
+      class="mt-2 btn w-1/2 md:w-1/3 mx-auto variant-glass-primary"
+      >Tạo hồ sơ</button
     >
   </div>
 </form>
