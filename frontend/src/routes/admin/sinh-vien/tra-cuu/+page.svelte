@@ -1,9 +1,11 @@
 <script lang="ts">
-    import SinhVienTable from "./SinhVienTable.svelte";
+  import SinhVienTable from "./SinhVienTable.svelte";
 </script>
 
-<input class="input mb-10 mt-16 w-3/5 ml-20" type="text" placeholder="Nhập mã số sinh viên cần tìm" />
+<div class="mx-auto w-[90%]">
+  <input class="input w-1/2 mb-20 mt-16" type="text" placeholder="Nhập mã số sinh viên cần tìm" />
+</div>
 
 <div class="mx-auto w-[90%] justify-center items-center flex">
-    <SinhVienTable></SinhVienTable>
+  <SinhVienTable></SinhVienTable>
 </div>

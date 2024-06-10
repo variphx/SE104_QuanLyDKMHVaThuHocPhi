@@ -19,6 +19,10 @@ export default {
 				custom: [
 					UIT,
 				],
+				preset: [
+					{ name: 'modern', enhancements: true },
+					{ name: 'wintry', enhancements: true }
+				]
 			},
 		}),
 	],

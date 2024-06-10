@@ -70,15 +70,15 @@ async fn post(
     Json(payload): Json<SinhVienCreatePayload>,
 ) -> Result<(), StatusCode> {
     let id = {
-        let nam_hoc = sqlx::query_scalar::<_, i64>(
-            "SELECT current_nam_hoc FROM THAM_SO
+        let nam_hoc = sqlx::query_scalar::<_, i32>(
+            "SELECT nam_hoc_current FROM THAM_SO
                 WHERE id = 1",
         )
         .fetch_one(context.pool())
         .await
         .unwrap();
 
-        let sinh_vien_len = sqlx::query_scalar::<_, i64>(
+        let sinh_vien_len = sqlx::query_scalar::<_, i32>(
             "SELECT sinh_vien_len FROM THAM_SO
                 WHERE id = 1",
         )
@@ -133,7 +133,7 @@ async fn post(
     .bind(&payload.id_chuong_trinh_hoc)
     .execute(context.pool())
     .await
-    .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    .unwrap();
 
     Ok(())
 }

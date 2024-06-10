@@ -39,7 +39,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .nest("/mon-hoc-mo", handler::mon_hoc_mo::router())
         .nest("/que-quan", handler::que_quan::router())
         .nest("/sinh-vien", handler::sinh_vien::router())
-        .nest("/user", handler::user::router());
+        .nest("/user", handler::user::router())
+        .nest("/params", handler::params::router());
 
     // nest api vào app
     let app = Router::new()

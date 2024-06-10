@@ -17,7 +17,7 @@
     ];
 </script>
 
-<div class="table-container">
+<div class="table-container variant-glass-primary">
     <table class="table table-hover">
         <thead>
             <tr>

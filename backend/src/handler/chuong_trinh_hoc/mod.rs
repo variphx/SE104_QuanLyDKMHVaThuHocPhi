@@ -13,12 +13,6 @@ struct ChuongTrinhHoc {
 }
 
 #[derive(Deserialize)]
-struct ChuongTrinhHocCreatePayload {
-    id_nganh: String,
-    id_hoc_ky: String,
-}
-
-#[derive(Deserialize)]
 struct ChuongTrinhHocQueryPayload {
     id: String,
 }
@@ -26,7 +20,7 @@ struct ChuongTrinhHocQueryPayload {
 pub fn router() -> Router<Context> {
     Router::new()
         .route("/get", axum::routing::post(get))
-        .route("/post", axum::routing::post(post))
+        .route("/nganh/get", axum::routing::get(nganh::get))
 }
 
 async fn get(
@@ -43,27 +37,4 @@ async fn get(
     .unwrap();
 
     Ok(Json(chuong_trinh_hoc))
-}
-
-async fn post(
-    State(context): State<Context>,
-    Json(payload): Json<ChuongTrinhHocCreatePayload>,
-) -> Result<(), StatusCode> {
-    let id = format!("{}{}", payload.id_nganh, payload.id_hoc_ky);
-    sqlx::query(
-        "INSERT INTO CHUONG_TRINH_HOC (id, id_nganh, id_hoc_ky)
-            VALUES (
-                $1,
-                $2,
-                $3
-            )",
-    )
-    .bind(id)
-    .bind(payload.id_nganh)
-    .bind(payload.id_hoc_ky)
-    .execute(context.pool())
-    .await
-    .unwrap();
-
-    Ok(())
 }

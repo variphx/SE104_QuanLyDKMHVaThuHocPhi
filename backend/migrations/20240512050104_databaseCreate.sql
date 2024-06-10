@@ -126,7 +126,7 @@ INSERT INTO
     GIOI_TINH (id)
 VALUES
     ('Nam'),
-    ('Nu');
+    ('Nữ');
 
 CREATE TABLE
     SINH_VIEN (
