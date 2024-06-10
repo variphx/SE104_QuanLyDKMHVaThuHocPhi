@@ -2,4 +2,8 @@
     import SinhVienCreateForm from "./SinhVienCreateForm.svelte";
 </script>
 
-<SinhVienCreateForm></SinhVienCreateForm>
+<div class="flex flex-col min-h-screen justify-center items-center">
+    <div class="w-2/5">
+        <SinhVienCreateForm></SinhVienCreateForm>
+    </div>
+</div>

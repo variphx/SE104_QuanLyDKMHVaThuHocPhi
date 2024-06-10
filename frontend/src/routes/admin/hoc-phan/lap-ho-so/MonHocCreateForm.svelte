@@ -3,7 +3,6 @@
         id: string;
         ten: string;
         id_khoa: string;
-        id_giang_vien: string;
         so_tiet: number;
         id_loai_mon_hoc: string;
     }
@@ -12,7 +11,6 @@
         id: "",
         ten: "",
         id_khoa: "",
-        id_giang_vien: "",
         so_tiet: 0,
         id_loai_mon_hoc: "",
     };
@@ -36,11 +34,6 @@
     <lable class="lable">
         <span> Khoa </span>
         <select class="select"></select>
-    </lable>
-
-    <lable class="lable">
-        <span> Tên giảng viên </span>
-        <select class="select" disabled={payload.id_khoa == ""}></select>
     </lable>
 
     <lable class="lable">

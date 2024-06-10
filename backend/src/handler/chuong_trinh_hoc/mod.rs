@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
+mod nganh;
+
 #[derive(Serialize, sqlx::FromRow)]
 struct ChuongTrinhHoc {
     id: String,

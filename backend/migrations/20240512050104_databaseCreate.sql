@@ -45,7 +45,7 @@ CREATE TABLE
 INSERT INTO
     DOI_TUONG (id, ten, he_so_hoc_phi)
 VALUES
-    ('default', 'Đối tượng phổ thông', 1.0);
+    ('0', 'Đối tượng phổ thông', 1.0);
 
 CREATE TABLE
     KHOA (id TEXT, ten TEXT NOT NULL, PRIMARY KEY (id));

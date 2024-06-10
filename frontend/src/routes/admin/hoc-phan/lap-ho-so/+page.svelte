@@ -2,4 +2,6 @@
     import MonHocCreateForm from "./MonHocCreateForm.svelte";
 </script>
 
-<MonHocCreateForm></MonHocCreateForm>
+<div class="flex flex-col min-h-screen justify-center items-center">
+    <MonHocCreateForm></MonHocCreateForm>
+</div>

@@ -3,21 +3,25 @@ use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
-#[derive(Deserialize)]
-struct QueQuanQueryPayload {
+#[derive(Serialize, sqlx::FromRow)]
+struct QueQuan {
     id: String,
+    thanh_pho: String,
+    tinh: String,
 }
-
-#[derive(Serialize)]
-struct QueQuan {}
 
 pub fn router() -> Router<Context> {
     Router::new().route("/get", axum::routing::post(get))
 }
 
-async fn get(
-    State(state): State<Context>,
-    Json(payload): Json<QueQuanQueryPayload>,
-) -> Result<Json<QueQuan>, Json<String>> {
-    todo!()
+async fn get(State(context): State<Context>) -> Result<Json<Vec<QueQuan>>, Json<String>> {
+    let que_quans = sqlx::query_as::<_, QueQuan>(
+        "SELECT THANH_PHO.id, THANH_PHO.ten as thanh_pho, TINH.ten as tinh FROM THANH_PHO, TINH
+            WHERE THANH_PHO.id_tinh = TINH.id",
+    )
+    .fetch_all(context.pool())
+    .await
+    .unwrap();
+
+    Ok(Json(que_quans))
 }

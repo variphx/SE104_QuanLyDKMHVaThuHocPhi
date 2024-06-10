@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { onMount } from "svelte";
+
     interface SinhVienCreatePayload {
         ten: string;
         gioi_tinh: string;
@@ -9,8 +11,15 @@
     }
 
     interface QueQuan {
+        id: string;
         thanh_pho: string;
         tinh: string;
+    }
+
+    interface Nganh {
+        id: string;
+        ten: string;
+        khoa: string;
     }
 
     let payload: SinhVienCreatePayload = {
@@ -22,18 +31,25 @@
         id_nganh: "",
     };
 
-    let que_quan: QueQuan = {
-        thanh_pho: "",
-        tinh: "",
-    };
+    let que_quans: QueQuan[] = [];
+    let nganhs: Nganh[] = [];
+
+    onMount(async () => {
+        fetch("http://localhost:8080/api/que-quan/get", {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: null,
+        })
+            .then((response) => response.json())
+            .then((data) => (que_quans = data))
+            .catch((error) => console.log(error));
+    });
 
     async function submitHandler() {
         console.log(payload);
     }
-
-    let isInputTinh: boolean = false;
-
-    $: isInputTinh = que_quan.tinh != "";
 </script>
 
 <form on:submit|preventDefault={submitHandler}>
@@ -57,19 +73,30 @@
         <input class="input" type="text" bind:value={payload.id_doi_tuong} />
     </label>
     <label class="lable">
-        <span> Quê quán </span>
-        <div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-            <div class="input-group-shim">Tỉnh</div>
-            <select></select>
-        </div>
-        <div class="input-group input-group-divider grid-cols-[auto_1fr_auto]">
-            <div class="input-group-shim">Thành phố</div>
-            <select disabled={!isInputTinh}></select>
+        <span>Quê quán</span>
+        <div class="input-group input-group-divider grid-cols-[1fr_auto]">
+            <select class="select" bind:value={payload.id_que_quan}>
+                {#each que_quans as iter}
+                    <option value={iter.id}
+                        >{iter.tinh}, {iter.thanh_pho}</option
+                    >
+                {/each}
+            </select>
+            <div class="input-group-shim">{payload.id_que_quan}</div>
         </div>
     </label>
     <label class="lable">
         <span> Ngành học </span>
-        <input class="input" type="text" bind:value={payload.id_nganh} />
+        <div class="input-group input-group-divider grid-cols-[1fr_auto]">
+            <select class="select" bind:value={payload.id_nganh}>
+                {#each nganhs as iter}
+                    <option value={iter.id}>
+                        {iter.khoa}, {iter.ten}
+                    </option>
+                {/each}
+            </select>
+            <div class="input-group-shim">{payload.id_nganh}</div>
+        </div>
     </label>
 
     <div>

@@ -65,3 +65,18 @@ VALUES
     ('094', 'Bạc Liêu'),
     ('095', 'Cà Mau'),
     ('096', 'Thành phố Hồ Chí Minh');
+
+INSERT INTO
+    THANH_PHO (id, id_tinh, ten)
+VALUES
+    ('568', '056', 'Nha Trang');
+
+INSERT INTO
+    KHOA (id, ten)
+VALUES
+    ('CS', 'Khoa học Máy tính');
+
+INSERT INTO
+    NGANH (id, id_khoa, ten)
+VALUES
+    ('CSCQ', 'CS', 'Khoa học Máy tính (Chính quy)');
