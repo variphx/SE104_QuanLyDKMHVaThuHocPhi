@@ -158,9 +158,9 @@ CREATE TABLE
 CREATE TABLE
     CHI_TIET_DANG_KY_MON_HOC (
         id_dang_ky_mon_hoc TEXT NOT NULL,
-        id_mon_hoc_mo TEXT NOT NULL,
-        PRIMARY KEY (id_dang_ky_mon_hoc, id_mon_hoc_mo),
-        FOREIGN KEY (id_mon_hoc_mo) REFERENCES MON_HOC_MO (id),
+        id_mon_hoc TEXT NOT NULL,
+        PRIMARY KEY (id_dang_ky_mon_hoc, id_mon_hoc),
+        FOREIGN KEY (id_mon_hoc) REFERENCES MON_HOC (id),
         FOREIGN KEY (id_dang_ky_mon_hoc) REFERENCES DANG_KY_MON_HOC (id)
     );
 

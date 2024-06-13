@@ -49,11 +49,19 @@
 </script>
 
 <form on:submit={submitHandler}>
-  <label class="lable">
-    <span> Sinh viên </span>
+  <label class="lable mb-4">
+    <div class="flex flex-col mb-4">
+      <span
+        class="h2 font-bold mx-auto rounded-full px-8 py-2 variant-glass-surface"
+      >
+        Sinh viên
+      </span>
+    </div>
     <input type="file" class="input" bind:files on:change={filesParse} />
   </label>
-  <button type="submit" class="btn variant-filled-primary">
-    Tạo sinh viên
-  </button>
+  <div class="flex flex-col">
+    <button type="submit" class="mx-auto btn variant-filled-primary">
+      Tạo sinh viên
+    </button>
+  </div>
 </form>

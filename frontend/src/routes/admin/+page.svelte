@@ -6,7 +6,7 @@
 </script>
 
 <div class="p-20">
-  <div class="min-h-screen grid grid-cols-2">
+  <div class="min-h-full grid grid-cols-2">
     <div class="m-4 p-4 rounded-2xl variant-glass-surface">
       <SinhVienCreateForm></SinhVienCreateForm>
     </div>

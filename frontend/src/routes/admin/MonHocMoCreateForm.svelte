@@ -53,9 +53,19 @@
 </script>
 
 <form on:submit={submitHandler}>
-  <lable class="lable">
-    <span> Mở môn học </span>
-    <input type="file" class="input" bind:files on:change={parseFiles} />
-  </lable>
-  <button class="btn variant-filled-primary" type="submit"> Mở </button>
+  <label class="lable mb-4">
+    <div class="flex flex-col mb-4">
+      <span
+        class="h2 font-bold mx-auto rounded-full px-8 py-2 variant-glass-surface"
+      >
+        Môn học mở
+      </span>
+    </div>
+    <input class="input" type="file" bind:files on:change={parseFiles} />
+  </label>
+  <div class="flex flex-col">
+    <button type="submit" class="mx-auto btn variant-filled-primary">
+      Mở môn học
+    </button>
+  </div>
 </form>

@@ -32,6 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // tạo router cho api
     let api = Router::new()
         .nest("/chuong-trinh-hoc", handler::chuong_trinh_hoc::router())
+        .nest("/dkmh", handler::dkmh::router())
         .nest("/doi-tuong", handler::doi_tuong::router())
         .nest("/hoc-ky", handler::hoc_ky::router())
         .nest("/hoc-phi", handler::hoc_phi::router())

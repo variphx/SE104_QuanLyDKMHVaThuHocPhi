@@ -17,7 +17,6 @@
         result: Papa.ParseResult<ChuongTrinhHocCreatePayload>,
       ) {
         payloads = result.data;
-        console.log(payloads);
       },
 
       header: true,
@@ -47,11 +46,19 @@
 </script>
 
 <form on:submit={submitHandler}>
-  <lable class="lable">
-    <span> Chương trình học </span>
+  <label class="lable mb-4">
+    <div class="flex flex-col mb-4">
+      <span
+        class="h2 font-bold mx-auto rounded-full px-8 py-2 variant-glass-surface"
+      >
+        Chương trình học
+      </span>
+    </div>
     <input class="input" type="file" bind:files on:change={parseFiles} />
-  </lable>
-  <button class="btn variant-filled-primary" type="submit">
-    Tạo chương trình học
-  </button>
+  </label>
+  <div class="flex flex-col">
+    <button type="submit" class="mx-auto btn variant-filled-primary">
+      Tạo chương trình học
+    </button>
+  </div>
 </form>

@@ -1,4 +1,5 @@
 pub mod chuong_trinh_hoc;
+pub mod dkmh;
 pub mod doi_tuong;
 pub mod hoc_ky;
 pub mod hoc_phi;
