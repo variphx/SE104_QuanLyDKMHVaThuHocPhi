@@ -16,8 +16,9 @@ struct MonHocMoQueryPayload {
 
 #[derive(Deserialize)]
 struct MonHocMoCreatePayload {
-    id_mon_hoc: String,
     id_chuong_trinh_hoc: String,
+    id_hoc_ky: String,
+    id_mon_hoc: String,
 }
 
 pub fn router() -> Router<Context> {
@@ -45,7 +46,10 @@ async fn get(
 }
 
 async fn post(State(context): State<Context>, Json(payload): Json<MonHocMoCreatePayload>) {
-    let id = format!("{}{}", payload.id_chuong_trinh_hoc, payload.id_mon_hoc);
+    let id = format!(
+        "{}{}{}",
+        payload.id_hoc_ky, payload.id_chuong_trinh_hoc, payload.id_mon_hoc
+    );
 
     sqlx::query(
         "INSERT INTO MON_HOC_MO (id, id_mon_hoc, id_chuong_trinh_hoc)

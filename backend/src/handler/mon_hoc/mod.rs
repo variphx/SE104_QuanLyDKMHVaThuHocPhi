@@ -14,10 +14,11 @@ struct MonHoc {
 
 #[derive(Deserialize)]
 struct MonHocCreatePayload {
+    id: String,
     id_khoa: String,
     ten: String,
     loai: String,
-    so_tiet: i64,
+    so_tiet: String,
 }
 
 #[derive(Deserialize)]
@@ -32,11 +33,6 @@ struct MonHocModifyPayload {
 }
 
 pub fn router() -> Router<Context> {
-    // axum::routing::get(get)
-    //     .post(post)
-    //     .patch(patch)
-    //     .delete(delete)
-
     Router::new()
         .route("/get", axum::routing::post(get))
         .route("/post", axum::routing::post(post))
@@ -61,18 +57,7 @@ async fn get(
 }
 
 async fn post(State(context): State<Context>, Json(payload): Json<MonHocCreatePayload>) {
-    let id = {
-        let mon_hoc_len = sqlx::query_scalar::<_, i64>(
-            "SELECT COUNT (*) FROM MON_HOC, KHOA
-                WHERE MON_HOC.id_khoa = KHOA.id",
-        )
-        .fetch_one(context.pool())
-        .await
-        .unwrap();
-
-        format!("{}{:04}", payload.id_khoa, mon_hoc_len + 1)
-    };
-
+    let so_tiet = payload.so_tiet.parse::<i64>().unwrap();
     sqlx::query(
         "INSERT INTO MON_HOC (id, id_khoa, ten, loai, so_tiet)
             VALUES (
@@ -83,11 +68,11 @@ async fn post(State(context): State<Context>, Json(payload): Json<MonHocCreatePa
                 $5
             )",
     )
-    .bind(id)
+    .bind(payload.id)
     .bind(payload.id_khoa)
     .bind(payload.ten)
     .bind(payload.loai)
-    .bind(payload.so_tiet)
+    .bind(so_tiet)
     .execute(context.pool())
     .await
     .unwrap();

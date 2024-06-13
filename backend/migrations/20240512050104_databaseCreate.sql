@@ -132,10 +132,7 @@ CREATE TABLE
     SINH_VIEN (
         id TEXT,
         ten TEXT NOT NULL,
-        can_cuoc TEXT NOT NULL,
         ngay_sinh DATE NOT NULL,
-        so_dien_thoai TEXT NOT NULL,
-        email TEXT NOT NULL,
         id_gioi_tinh TEXT NOT NULL,
         id_que_quan TEXT NOT NULL,
         id_doi_tuong TEXT NOT NULL,

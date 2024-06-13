@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 argon2 = { version = "0.5.3", features = ["std"] }
 axum = "0.7.5"
+calamine = "0.25.0"
 dotenv = "0.15.0"
 rand = "0.8.5"
 serde = "1.0.201"

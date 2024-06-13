@@ -19,11 +19,9 @@ struct SinhVien {
 
 #[derive(Deserialize)]
 struct SinhVienCreatePayload {
+    id: String,
     ten: String,
-    can_cuoc: String,
     ngay_sinh: String,
-    so_dien_thoai: String,
-    email: String,
     id_gioi_tinh: String,
     id_que_quan: String,
     id_doi_tuong: String,
@@ -69,25 +67,6 @@ async fn post(
     State(context): State<Context>,
     Json(payload): Json<SinhVienCreatePayload>,
 ) -> Result<(), StatusCode> {
-    let sinh_vien_len = sqlx::query_scalar::<_, i32>(
-        "SELECT sinh_vien_len FROM THAM_SO
-                WHERE id = 1",
-    )
-    .fetch_one(context.pool())
-    .await
-    .unwrap();
-    let id = {
-        let nam_hoc = sqlx::query_scalar::<_, String>(
-            "SELECT id_hoc_ky_hien_tai FROM THAM_SO
-                WHERE id = 1",
-        )
-        .fetch_one(context.pool())
-        .await
-        .unwrap();
-
-        format! {"{:04}{:04}", nam_hoc, sinh_vien_len+1}
-    };
-
     let ngay_sinh = time::Date::parse(
         &payload.ngay_sinh,
         time::macros::format_description!("[year]-[month]-[day]"),
@@ -98,10 +77,7 @@ async fn post(
         "INSERT INTO SINH_VIEN (
             id,
             ten,
-            can_cuoc,
             ngay_sinh,
-            so_dien_thoai,
-            email,
             id_gioi_tinh,
             id_que_quan,
             id_doi_tuong,
@@ -114,32 +90,16 @@ async fn post(
             $4,
             $5,
             $6,
-            $7,
-            $8,
-            $9,
-            $10
+            $7
         )",
     )
-    .bind(&id)
+    .bind(&payload.id)
     .bind(&payload.ten)
-    .bind(&payload.can_cuoc)
     .bind(ngay_sinh)
-    .bind(&payload.so_dien_thoai)
-    .bind(&payload.email)
     .bind(&payload.id_gioi_tinh)
     .bind(&payload.id_que_quan)
     .bind(&payload.id_doi_tuong)
     .bind(&payload.id_chuong_trinh_hoc)
-    .execute(context.pool())
-    .await
-    .unwrap();
-
-    sqlx::query(
-        "UPDATE THAM_SO
-                SET sinh_vien_len = $1
-                WHERE id = 1",
-    )
-    .bind(sinh_vien_len + 1)
     .execute(context.pool())
     .await
     .unwrap();
@@ -170,10 +130,7 @@ async fn patch(
         "INSERT INTO SINH_VIEN (
             id,
             ten,
-            can_cuoc,
             ngay_sinh,
-            so_dien_thoai,
-            email,
             id_gioi_tinh,
             id_que_quan,
             id_doi_tuong,
@@ -186,18 +143,12 @@ async fn patch(
             $4,
             $5,
             $6,
-            $7,
-            $8,
-            $9,
-            $10
+            $7
         )",
     )
     .bind(id)
     .bind(&payload.ten)
-    .bind(&payload.can_cuoc)
     .bind(ngay_sinh)
-    .bind(&payload.so_dien_thoai)
-    .bind(&payload.email)
     .bind(&payload.id_gioi_tinh)
     .bind(&payload.id_que_quan)
     .bind(&payload.id_doi_tuong)

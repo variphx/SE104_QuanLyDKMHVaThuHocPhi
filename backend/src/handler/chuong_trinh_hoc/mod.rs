@@ -8,8 +8,8 @@ mod nganh;
 #[derive(Serialize, sqlx::FromRow)]
 struct ChuongTrinhHoc {
     id: String,
-    id_nganh: String,
     id_hoc_ky: String,
+    id_nganh: String,
 }
 
 #[derive(Deserialize)]
@@ -17,9 +17,16 @@ struct ChuongTrinhHocQueryPayload {
     id: String,
 }
 
+#[derive(Deserialize)]
+struct ChuongTrinhHocCreatePayload {
+    id_hoc_ky: String,
+    id_nganh: String,
+}
+
 pub fn router() -> Router<Context> {
     Router::new()
         .route("/get", axum::routing::post(get))
+        .route("/post", axum::routing::post(post))
         .route("/nganh/get", axum::routing::get(nganh::get))
 }
 
@@ -37,4 +44,28 @@ async fn get(
     .unwrap();
 
     Ok(Json(chuong_trinh_hoc))
+}
+
+async fn post(
+    State(context): State<Context>,
+    Json(payload): Json<ChuongTrinhHocCreatePayload>,
+) -> impl axum::response::IntoResponse {
+    let id = format!("{}{}", payload.id_nganh, payload.id_hoc_ky);
+
+    sqlx::query(
+        "INSERT INTO CHUONG_TRINH_HOC (id, id_nganh, id_hoc_ky)
+            VALUES (
+                $1,
+                $2,
+                $3
+            )",
+    )
+    .bind(id)
+    .bind(payload.id_nganh)
+    .bind(payload.id_hoc_ky)
+    .execute(context.pool())
+    .await
+    .unwrap();
+
+    (StatusCode::CREATED, "Tạo thành công")
 }

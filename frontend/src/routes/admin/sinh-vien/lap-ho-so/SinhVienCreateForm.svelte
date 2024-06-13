@@ -108,6 +108,12 @@
 
       toastStore.trigger(toast);
     } else {
+      const toast: ToastSettings = {
+        message: "Tạo sinh viên thất bại!",
+        timeout: 3000,
+      };
+
+      toastStore.trigger(toast);
       throw new Error(request.statusText);
     }
   }
@@ -161,7 +167,7 @@
   <div class="flex flex-col">
     <button
       type="submit"
-      class="mt-2 btn w-1/2 md:w-1/3 mx-auto variant-glass-primary"
+      class="mt-2 btn w-1/2 md:w-1/3 mx-auto variant-filled-primary"
       >Tạo hồ sơ</button
     >
   </div>
