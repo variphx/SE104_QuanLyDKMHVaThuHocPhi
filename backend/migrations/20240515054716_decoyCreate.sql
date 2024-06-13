@@ -96,14 +96,31 @@ INSERT INTO
 VALUES
     ('20220001', 'Huỳnh Anh Dũng', '2004-09-06', 'Nam', '568', '0', 'CSCQ202201');
 
+INSERT INTO
+    MON_HOC (id, id_khoa, ten, loai, so_tiet)
+VALUES
+    ('CS112', 'CS', 'Phân tích Thiết kế Thuật toán', 'LT', 60);
+
+INSERT INTO
+    MON_HOC_MO (id, id_mon_hoc, id_hoc_ky, id_chuong_trinh_hoc)
+VALUES
+    ('temp', 'CS112', '202201', 'CSCQ202201');
+
+INSERT INTO
+    DANG_KY_MON_HOC (id, id_sinh_vien, id_hoc_ky)
+VALUES
+    ('20220001202201', '20220001', '202201');
+
 
 INSERT INTO
     THAM_SO (
         id,
         gia_tin_chi_lt,
         gia_tin_chi_th,
+        he_so_tin_chi_lt,
+        he_so_tin_chi_th,
         sinh_vien_len,
-        id_hoc_ky_hien_tai
+        id_hoc_ky
     )
 VALUES
-    (1, 0, 0, 0, '202201');
+    (1, 27000, 37000, 15, 30, 0, '202201');

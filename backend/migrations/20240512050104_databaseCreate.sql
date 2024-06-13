@@ -180,8 +180,9 @@ CREATE TABLE
         id SMALLINT PRIMARY KEY,
         gia_tin_chi_lt BIGINT NOT NULL,
         gia_tin_chi_th BIGINT NOT NULL,
+        he_so_tin_chi_lt SMALLINT NOT NULL,
+        he_so_tin_chi_th SMALLINT NOT NULL,
         sinh_vien_len INT NOT NULL,
-        id_hoc_ky_hien_tai TEXT NOT NULL,
-        FOREIGN KEY (id_hoc_ky_hien_tai) REFERENCES HOC_KY (id)
+        id_hoc_ky TEXT NOT NULL,
+        FOREIGN KEY (id_hoc_ky) REFERENCES HOC_KY (id)
     );
-

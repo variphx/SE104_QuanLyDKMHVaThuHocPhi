@@ -15,6 +15,7 @@ export const load: PageServerLoad = async ({ params }) => {
     );
 
     return {
-        mon_hocs: request.json()
-    }
+        id_sinh_vien: params.id,
+        mon_hocs: request.json(),
+    };
 }

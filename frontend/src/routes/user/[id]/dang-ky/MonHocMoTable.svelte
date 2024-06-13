@@ -7,6 +7,7 @@
   }
 
   export let mon_hocs: MonHocMo[];
+  export let id_sinh_vien: string;
   let display_mon_hocs: MonHocMo[] = mon_hocs;
   export let filter_string: string;
   let filter_strings: string[];
@@ -29,7 +30,33 @@
 
   $: filterMonHocs(filter_string);
 
-  async function submitHandler() {}
+  interface ChiTietDangKyMonHocCreatePayload {
+    id_sinh_vien: string;
+    id_mon_hoc: string;
+  }
+
+  async function submitHandler() {
+    let mon_hocs_created_count = 0;
+
+    for (let id_mon_hoc of filter_strings) {
+      const request = await fetch("http://localhost:8080/api/dkmh/post", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify({
+          id_mon_hoc: id_mon_hoc,
+          id_sinh_vien: id_sinh_vien,
+        }),
+      });
+
+      if (request.ok) {
+        mon_hocs_created_count += 1;
+      }
+
+      alert(`${mon_hocs_created_count} môn học đăng ký thành công`);
+    }
+  }
 </script>
 
 <div class="table-container">
