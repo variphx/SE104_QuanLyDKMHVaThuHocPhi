@@ -113,10 +113,12 @@ CREATE TABLE
     MON_HOC_MO (
         id TEXT,
         id_mon_hoc TEXT NOT NULL,
+        id_hoc_ky TEXT NOT NULL,
         id_chuong_trinh_hoc TEXT NOT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY (id_mon_hoc) REFERENCES MON_HOC (id),
-        FOREIGN KEY (id_chuong_trinh_hoc) REFERENCES CHUONG_TRINH_HOC (id)
+        FOREIGN KEY (id_chuong_trinh_hoc) REFERENCES CHUONG_TRINH_HOC (id),
+        FOREIGN KEY (id_hoc_ky) REFERENCES HOC_KY (id)
     );
 
 CREATE TABLE

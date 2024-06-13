@@ -1,5 +1,5 @@
 use axum::{extract::State, Json, Router};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use crate::context::Context;
 

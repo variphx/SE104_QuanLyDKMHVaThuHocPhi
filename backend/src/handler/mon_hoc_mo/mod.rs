@@ -6,7 +6,9 @@ use crate::context::Context;
 #[derive(Serialize, sqlx::FromRow)]
 struct MonHocMo {
     id_mon_hoc: String,
-    id_chuong_trinh_hoc: String,
+    ten: String,
+    loai: String,
+    so_tin_chi: i32,
 }
 
 #[derive(Deserialize)]
@@ -32,9 +34,10 @@ async fn get(
     State(context): State<Context>,
     Json(payload): Json<MonHocMoQueryPayload>,
 ) -> Json<Vec<MonHocMo>> {
-    let mon_hoc_mos = sqlx::query_as::<_, MonHocMo>(
-        "SELECT MON_HOC_MO.id_mon_hoc, MON_HOC_MO.id_chuong_trinh_hoc FROM MON_HOC_MO, SINH_VIEN
+    let mut mon_hoc_mos = sqlx::query_as::<_, MonHocMo>(
+        "SELECT MON_HOC.id as id_mon_hoc, MON_HOC.ten, MON_HOC.loai, MON_HOC.so_tiet, 0 as so_tin_chi FROM MON_HOC_MO, SINH_VIEN, MON_HOC
             WHERE MON_HOC_MO.id_chuong_trinh_hoc = SINH_VIEN.id_chuong_trinh_hoc
+                AND MON_HOC_MO.id_mon_hoc = MON_HOC.id
                 AND SINH_VIEN.id = $1",
     )
     .bind(&payload.id_sinh_vien)
@@ -52,16 +55,18 @@ async fn post(State(context): State<Context>, Json(payload): Json<MonHocMoCreate
     );
 
     sqlx::query(
-        "INSERT INTO MON_HOC_MO (id, id_mon_hoc, id_chuong_trinh_hoc)
+        "INSERT INTO MON_HOC_MO (id, id_mon_hoc, id_chuong_trinh_hoc, id_hoc_ky)
             VALUES (
                 $1,
                 $2,
-                $3
+                $3,
+                $4
             )",
     )
     .bind(id)
     .bind(payload.id_mon_hoc)
     .bind(payload.id_chuong_trinh_hoc)
+    .bind(payload.id_hoc_ky)
     .execute(context.pool())
     .await
     .unwrap();

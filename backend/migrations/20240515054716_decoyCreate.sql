@@ -87,6 +87,17 @@ VALUES
     ('202201', 'Một', 2022);
 
 INSERT INTO
+    CHUONG_TRINH_HOC (id, id_nganh, id_hoc_ky)
+VALUES
+    ('CSCQ202201', 'CSCQ', '202201');
+
+INSERT INTO
+    SINH_VIEN (id, ten, ngay_sinh, id_gioi_tinh, id_que_quan, id_doi_tuong, id_chuong_trinh_hoc)
+VALUES
+    ('20220001', 'Huỳnh Anh Dũng', '2004-09-06', 'Nam', '568', '0', 'CSCQ202201');
+
+
+INSERT INTO
     THAM_SO (
         id,
         gia_tin_chi_lt,
@@ -96,8 +107,3 @@ INSERT INTO
     )
 VALUES
     (1, 0, 0, 0, '202201');
-
-INSERT INTO 
-    CHUONG_TRINH_HOC (id, id_nganh, id_hoc_ky)
-VALUES
-    ('CSCQ202201', 'CSCQ', '202201');
