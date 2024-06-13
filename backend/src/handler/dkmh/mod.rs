@@ -15,16 +15,19 @@ pub fn router() -> Router<Context> {
 async fn post(
     State(context): State<Context>,
     Json(payload): Json<ChiTietDangKyMonHocCreatePayload>,
-) -> StatusCode {
-    let id_hoc_ky = sqlx::query_scalar::<_, String>(
+) -> Result<StatusCode, StatusCode> {
+    let id_hoc_ky = match sqlx::query_scalar::<_, String>(
         "SELECT id_hoc_ky FROM THAM_SO
             WHERE id = 1",
     )
     .fetch_one(context.pool())
     .await
-    .unwrap();
+    {
+        Ok(value) => value,
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+    };
 
-    let id_dang_ky_mon_hoc = sqlx::query_scalar::<_, String>(
+    let id_dang_ky_mon_hoc = match sqlx::query_scalar::<_, String>(
         "SELECT id FROM DANG_KY_MON_HOC
             WHERE id_sinh_vien = $1
                 AND id_hoc_ky = $2",
@@ -33,9 +36,12 @@ async fn post(
     .bind(&id_hoc_ky)
     .fetch_one(context.pool())
     .await
-    .unwrap();
+    {
+        Ok(value) => value,
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+    };
 
-    sqlx::query(
+    match sqlx::query(
         "INSERT INTO CHI_TIET_DANG_KY_MON_HOC (id_mon_hoc, id_dang_ky_mon_hoc)
             VALUES (
                 $1,
@@ -46,7 +52,8 @@ async fn post(
     .bind(&id_dang_ky_mon_hoc)
     .execute(context.pool())
     .await
-    .unwrap();
-
-    StatusCode::CREATED
+    {
+        Ok(_) => Ok(StatusCode::CREATED),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
 }

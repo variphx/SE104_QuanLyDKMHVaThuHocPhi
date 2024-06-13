@@ -1,4 +1,4 @@
-use axum::{extract::State, http::StatusCode, Json, Router};
+use axum::{body::Body, extract::State, http::StatusCode, response::IntoResponse, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
@@ -34,14 +34,17 @@ async fn get(
     State(context): State<Context>,
     Json(payload): Json<ChuongTrinhHocQueryPayload>,
 ) -> Result<Json<ChuongTrinhHoc>, StatusCode> {
-    let chuong_trinh_hoc = sqlx::query_as::<_, ChuongTrinhHoc>(
+    let chuong_trinh_hoc = match sqlx::query_as::<_, ChuongTrinhHoc>(
         "SELECT * FROM CHUONG_TRINH_HOC
             WHERE id = $1",
     )
     .bind(&payload.id)
     .fetch_one(context.pool())
     .await
-    .unwrap();
+    {
+        Ok(chuong_trinh_hoc) => chuong_trinh_hoc,
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+    };
 
     Ok(Json(chuong_trinh_hoc))
 }
@@ -49,10 +52,10 @@ async fn get(
 async fn post(
     State(context): State<Context>,
     Json(payload): Json<ChuongTrinhHocCreatePayload>,
-) -> impl axum::response::IntoResponse {
+) -> Result<StatusCode, StatusCode> {
     let id = format!("{}{}", payload.id_nganh, payload.id_hoc_ky);
 
-    sqlx::query(
+    match sqlx::query(
         "INSERT INTO CHUONG_TRINH_HOC (id, id_nganh, id_hoc_ky)
             VALUES (
                 $1,
@@ -65,7 +68,8 @@ async fn post(
     .bind(payload.id_hoc_ky)
     .execute(context.pool())
     .await
-    .unwrap();
-
-    (StatusCode::CREATED, "Tạo thành công")
+    {
+        Ok(_) => Ok(StatusCode::CREATED),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
 }

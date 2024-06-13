@@ -12,44 +12,51 @@ pub struct DoiTuongChinhSachCreatePayload {
 pub async fn post(
     State(context): State<Context>,
     Json(payload): Json<DoiTuongChinhSachCreatePayload>,
-) -> Result<(), StatusCode> {
+) -> Result<StatusCode, StatusCode> {
     let id = {
-        let doi_tuong_len = sqlx::query_scalar::<_, i64>(
+        let doi_tuong_len = match sqlx::query_scalar::<_, i64>(
             "SELECT COUNT (*) FROM DOI_TUONG, DOI_TUONG_CHINH_SACH
                 WHERE DOI_TUONG.id = DOI_TUONG_CHINH_SACH.id",
         )
         .fetch_one(context.pool())
         .await
-        .unwrap();
+        {
+            Ok(value) => value,
+            Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+        };
 
         format!("DTCS{:03}", doi_tuong_len + 1)
     };
 
-    sqlx::query(
+    match sqlx::query(
         "INSERT INTO DOI_TUONG (id, ten, mien_giam)
-            VALUES (
-                $1,
-                $2,
-                $3
-            )",
+                VALUES (
+                    $1,
+                    $2,
+                    $3
+                )",
     )
     .bind(&id)
     .bind(payload.ten)
     .bind(payload.mien_giam)
     .execute(context.pool())
     .await
-    .unwrap();
+    {
+        Ok(_) => {}
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+    };
 
-    sqlx::query(
+    match sqlx::query(
         "INSERT INTO DOI_TUONG_CHINH_SACH (id)
-            VALUES (
-                $1
-            )",
+                VALUES (
+                    $1
+                )",
     )
     .bind(id)
     .execute(context.pool())
     .await
-    .unwrap();
-
-    Ok(())
+    {
+        Ok(_) => Ok(StatusCode::CREATED),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
 }
