@@ -30,12 +30,12 @@
 
   $: filterMonHocs(filter_string);
 
-  interface ChiTietDangKyMonHocCreatePayload {
-    id_sinh_vien: string;
-    id_mon_hoc: string;
-  }
-
   async function submitHandler() {
+    if (!filter_strings) {
+      alert("Chưa chọn môn học");
+      return;
+    }
+
     let mon_hocs_created_count = 0;
 
     for (let id_mon_hoc of filter_strings) {
@@ -82,8 +82,12 @@
   </table>
 </div>
 
-<button
-  type="button"
-  class="btn variant-filled-primary"
-  on:click={submitHandler}>Đăng ký</button
->
+<div class="min-w-full mt-12">
+  <div class="w-1/4 mx-auto">
+    <button
+      type="button"
+      class="btn variant-filled-primary w-full items-center justify-center"
+      on:click={submitHandler}>Đăng ký</button
+    >
+  </div>
+</div>

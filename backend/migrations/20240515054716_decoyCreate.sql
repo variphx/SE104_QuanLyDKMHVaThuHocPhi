@@ -111,6 +111,10 @@ INSERT INTO
 VALUES
     ('20220001202201', '20220001', '202201');
 
+INSERT INTO
+    HOC_PHI (tong, da_thanh_toan, id_hoc_ky, id_sinh_vien)
+VALUES
+    (14000000, 0, '202201', '20220001');
 
 INSERT INTO
     THAM_SO (

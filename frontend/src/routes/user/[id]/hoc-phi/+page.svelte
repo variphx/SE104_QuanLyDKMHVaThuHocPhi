@@ -2,31 +2,39 @@
   import type { PageData } from "./$types";
 
   export let data: PageData;
-
-  const id_sinh_vien = data.id_sinh_vien;
-  let id_hoc_ky: string;
-
-  interface HocPhi {
-    tong: number;
-    da_thanh_toan: number;
-  }
-
-  let hoc_phi: HocPhi;
-
-  const submitHandler = async () => {
-    const request = await fetch("http://localhost:8080/api/hoc-phi/get", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id_sinh_vien: id_sinh_vien,
-        id_hoc_ky: id_hoc_ky,
-      }),
-    });
-  };
 </script>
 
-<select class="select" bind:value={id_hoc_ky}>
-  <option value="202201">Năm học 2022-2023, học kỳ Một</option>
-</select>
+<div class="h2 m-4 px-8 py-4 variant-filled-primary w-fit rounded-full">
+  Học phí sinh viên: <b>{data.id_sinh_vien}</b>
+</div>
+
+<div class="flex flex-col p-8">
+  {#await data.hoc_phis then hoc_phis}
+    {#each hoc_phis as hoc_ky}
+      <div
+        class="w-fit mx-auto px-16 py-8 variant-glass-surface grid grid-cols-2 gap-x-4 gap-y-2 h4 rounded-3xl"
+      >
+        <div>
+          <b>Năm học:</b>
+          {hoc_ky.nam_hoc}
+        </div>
+        <div>
+          <b>Học kỳ:</b>
+          {hoc_ky.ten_hoc_ky}
+        </div>
+        <div>
+          <b>Tổng học phí:</b>
+          {hoc_ky.tong}
+        </div>
+        <div>
+          <b>Đã thanh toán:</b>
+          {hoc_ky.da_thanh_toan}
+        </div>
+        <div>
+          <b>Còn lại:</b>
+          {hoc_ky.tong - hoc_ky.da_thanh_toan}
+        </div>
+      </div>
+    {/each}
+  {/await}
+</div>

@@ -167,7 +167,7 @@ CREATE TABLE
 CREATE TABLE
     HOC_PHI (
         tong DOUBLE PRECISION NOT NULL,
-        da_thanh_toan BIGINT NOT NULL,
+        da_thanh_toan DOUBLE PRECISION NOT NULL,
         id_hoc_ky TEXT NOT NULL,
         id_sinh_vien TEXT NOT NULL,
         PRIMARY KEY (id_sinh_vien, id_hoc_ky),

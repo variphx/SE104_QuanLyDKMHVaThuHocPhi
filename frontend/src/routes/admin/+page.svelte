@@ -6,17 +6,17 @@
 </script>
 
 <div class="p-20">
-  <div class="min-h-full grid grid-cols-2">
-    <div class="m-4 p-4 rounded-2xl variant-glass-surface">
+  <div class="min-h-full grid grid-cols-2 gap-8">
+    <div class="p-12 rounded-2xl variant-glass-surface">
       <SinhVienCreateForm></SinhVienCreateForm>
     </div>
-    <div class="m-4 p-4 rounded-2xl variant-glass-surface">
+    <div class="p-12 rounded-2xl variant-glass-surface">
       <ChuongTrinhHocCreateForm></ChuongTrinhHocCreateForm>
     </div>
-    <div class="m-4 p-4 rounded-2xl variant-glass-surface">
+    <div class="p-12 rounded-2xl variant-glass-surface">
       <MonHocCreateForm></MonHocCreateForm>
     </div>
-    <div class="m-4 p-4 rounded-2xl variant-glass-surface">
+    <div class="p-12 rounded-2xl variant-glass-surface">
       <MonHocMoCreateForm></MonHocMoCreateForm>
     </div>
   </div>

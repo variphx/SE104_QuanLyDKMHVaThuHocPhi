@@ -1,20 +1,20 @@
-use axum::{extract::State, Json, Router};
+use axum::{extract::State, http::StatusCode, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
 #[derive(Serialize, sqlx::FromRow)]
 struct HocPhi {
-    id_sinh_vien: String,
-    id_hoc_ky: String,
-    tong: i64,
-    da_thanh_toan: i64,
+    nam_hoc: i32,
+    ten_hoc_ky: String,
+    tong: f64,
+    da_thanh_toan: f64,
 }
 
 #[derive(Deserialize)]
 struct HocPhiQueryPayload {
     id_sinh_vien: String,
-    id_hoc_ky: String,
+    // id_hoc_ky: String,
 }
 
 #[derive(Deserialize)]
@@ -33,19 +33,19 @@ pub fn router() -> Router<Context> {
 async fn get(
     State(context): State<Context>,
     Json(payload): Json<HocPhiQueryPayload>,
-) -> Json<HocPhi> {
-    let hoc_phi = sqlx::query_as::<_, HocPhi>(
-        "SELECT * FROM HOC_PHI
+) -> Result<Json<Vec<HocPhi>>, StatusCode> {
+    let hoc_phis = sqlx::query_as::<_, HocPhi>(
+        "SELECT HOC_KY.nam_hoc, HOC_KY.ten as ten_hoc_ky, HOC_PHI.tong, HOC_PHI.da_thanh_toan FROM HOC_PHI, HOC_KY
             WHERE id_sinh_vien = $1
-                AND id_hoc_ky = $2",
+                AND id_hoc_ky = HOC_KY.id", // AND id_hoc_ky = $2",
     )
     .bind(payload.id_sinh_vien)
-    .bind(payload.id_hoc_ky)
-    .fetch_one(context.pool())
+    // .bind(payload.id_hoc_ky)
+    .fetch_all(context.pool())
     .await
     .unwrap();
 
-    Json(hoc_phi)
+    Ok(Json(hoc_phis))
 }
 
 async fn post(State(context): State<Context>, Json(payload): Json<HocPhiCreatePayload>) {

@@ -1,4 +1,6 @@
+use argon2::{password_hash::SaltString, Argon2, PasswordHasher};
 use axum::{extract::State, http::StatusCode, Json, Router};
+use rand::rngs::OsRng;
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
@@ -66,14 +68,16 @@ async fn get(
 async fn post(
     State(context): State<Context>,
     Json(payload): Json<SinhVienCreatePayload>,
-) -> Result<(), StatusCode> {
-    let ngay_sinh = time::Date::parse(
+) -> Result<StatusCode, StatusCode> {
+    let ngay_sinh = match time::Date::parse(
         &payload.ngay_sinh,
         time::macros::format_description!("[year]-[month]-[day]"),
-    )
-    .unwrap();
+    ) {
+        Ok(ngay_sinh) => ngay_sinh,
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+    };
 
-    sqlx::query(
+    match sqlx::query(
         "INSERT INTO SINH_VIEN (
             id,
             ten,
@@ -102,9 +106,37 @@ async fn post(
     .bind(&payload.id_chuong_trinh_hoc)
     .execute(context.pool())
     .await
-    .unwrap();
+    {
+        Ok(_) => {}
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+    };
 
-    Ok(())
+    let password = payload.id.as_bytes();
+    let salt = SaltString::generate(&mut OsRng);
+
+    let argon2 = Argon2::default();
+
+    let password_hash = match argon2.hash_password(password, &salt) {
+        Ok(hash) => hash,
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+    }
+    .to_string();
+
+    match sqlx::query(
+        "INSERT INTO USERS (username, password)
+            VALUES (
+                $1,
+                $2
+            )",
+    )
+    .bind(payload.id.as_str())
+    .bind(password_hash.as_str())
+    .execute(context.pool())
+    .await
+    {
+        Ok(_) => Ok(StatusCode::CREATED),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
 }
 
 async fn patch(

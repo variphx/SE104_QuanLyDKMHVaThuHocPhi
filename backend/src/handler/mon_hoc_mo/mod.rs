@@ -1,4 +1,4 @@
-use axum::{extract::State, Json, Router};
+use axum::{extract::State, http::StatusCode, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
@@ -8,6 +8,7 @@ struct MonHocMo {
     id_mon_hoc: String,
     ten: String,
     loai: String,
+    so_tiet: i32,
     so_tin_chi: i32,
 }
 
@@ -33,7 +34,7 @@ pub fn router() -> Router<Context> {
 async fn get(
     State(context): State<Context>,
     Json(payload): Json<MonHocMoQueryPayload>,
-) -> Json<Vec<MonHocMo>> {
+) -> Result<Json<Vec<MonHocMo>>, StatusCode> {
     let mut mon_hoc_mos = sqlx::query_as::<_, MonHocMo>(
         "SELECT MON_HOC.id as id_mon_hoc, MON_HOC.ten, MON_HOC.loai, MON_HOC.so_tiet, 0 as so_tin_chi FROM MON_HOC_MO, SINH_VIEN, MON_HOC
             WHERE MON_HOC_MO.id_chuong_trinh_hoc = SINH_VIEN.id_chuong_trinh_hoc
@@ -45,7 +46,38 @@ async fn get(
     .await
     .unwrap();
 
-    Json(mon_hoc_mos)
+    let he_so_tin_chi_lt = match sqlx::query_scalar::<_, i8>(
+        "SELECT he_so_tin_chi_lt FROM THAM_SO
+            WHERE id = 1",
+    )
+    .fetch_one(context.pool())
+    .await
+    {
+        Ok(value) => value,
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+    };
+
+    let he_so_tin_chi_th = match sqlx::query_scalar::<_, i8>(
+        "SELECT he_so_tin_chi_th FROM THAM_SO
+            WHERE id = 1",
+    )
+    .fetch_one(context.pool())
+    .await
+    {
+        Ok(value) => value,
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+    };
+
+    for mon_hoc_mo in mon_hoc_mos.iter_mut() {
+        mon_hoc_mo.so_tin_chi = mon_hoc_mo.so_tiet
+            / match mon_hoc_mo.loai.as_str() {
+                "LT" => he_so_tin_chi_lt,
+                "TH" => he_so_tin_chi_th,
+                _ => unreachable!(),
+            } as i32;
+    }
+
+    Ok(Json(mon_hoc_mos))
 }
 
 async fn post(State(context): State<Context>, Json(payload): Json<MonHocMoCreatePayload>) {

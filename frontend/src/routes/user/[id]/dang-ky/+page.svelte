@@ -6,9 +6,15 @@
   export let data: PageData;
 </script>
 
-<input class="input" bind:value={filter_string} />
+<div class="w-4/5 mx-auto mb-8 mt-4">
+  <div class="">
+    <input class="input" type="search" bind:value={filter_string} />
+  </div>
+</div>
 
 {#await data.mon_hocs then mon_hocs}
-  <MonHocMoTable id_sinh_vien={data.id_sinh_vien} {mon_hocs} {filter_string}
-  ></MonHocMoTable>
+  <div class="w-4/5 mx-auto">
+    <MonHocMoTable id_sinh_vien={data.id_sinh_vien} {mon_hocs} {filter_string}
+    ></MonHocMoTable>
+  </div>
 {/await}
