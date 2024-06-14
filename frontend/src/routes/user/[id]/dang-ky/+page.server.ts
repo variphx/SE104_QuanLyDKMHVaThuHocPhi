@@ -21,5 +21,5 @@ export const load: PageServerLoad = async ({ params }) => {
 }
 
 export const actions = {
-    default: async () => { }
+    default: async () => { },
 }

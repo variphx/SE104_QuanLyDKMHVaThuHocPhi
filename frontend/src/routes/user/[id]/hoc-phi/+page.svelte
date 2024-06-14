@@ -4,7 +4,7 @@
   export let data: PageData;
 </script>
 
-<div class="h2 m-4 px-8 py-4 variant-filled-primary w-fit rounded-full">
+<div class="h4 m-4 px-8 py-4 variant-filled-primary w-fit rounded-full">
   Học phí sinh viên: <b>{data.id_sinh_vien}</b>
 </div>
 
