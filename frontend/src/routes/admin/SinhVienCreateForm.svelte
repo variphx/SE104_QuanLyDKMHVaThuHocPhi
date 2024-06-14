@@ -29,8 +29,9 @@
   }
 
   async function submitHandler() {
+    let success_count = 0;
+
     for (let payload of payloads) {
-      console.log(JSON.stringify(payload));
       const request = await fetch("http://localhost:8080/api/sinh-vien/post", {
         headers: {
           "Content-Type": "application/json",
@@ -43,8 +44,9 @@
         continue;
       }
 
-      alert("Sinh viên tạo thành công");
+      success_count += 1;
     }
+    alert(`${success_count} sinh viên tạo thành công`);
   }
 </script>
 

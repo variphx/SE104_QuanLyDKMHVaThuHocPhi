@@ -1,5 +1,5 @@
 use argon2::{password_hash::SaltString, Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
-use axum::{extract::State, http::StatusCode, Json, Router};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Json, Router};
 use rand::rngs::OsRng;
 use serde::{Deserialize, Serialize};
 
@@ -17,11 +17,6 @@ struct UserLoginPayload {
     password: String,
 }
 
-#[derive(Serialize)]
-struct SessionCreateResponse {
-    is_success: bool,
-}
-
 pub fn router() -> Router<Context> {
     Router::new()
         .route("/get", axum::routing::post(get))
@@ -30,28 +25,36 @@ pub fn router() -> Router<Context> {
         .route("/delete", axum::routing::post(delete))
 }
 
+#[derive(Serialize)]
+struct SessionCreateResponse {
+    auth_token: Option<String>,
+}
+
 async fn get(
     State(context): State<Context>,
     Json(UserLoginPayload { username, password }): Json<UserLoginPayload>,
-) -> Json<SessionCreateResponse> {
+) -> impl IntoResponse {
     let password_hash = match sqlx::query_scalar::<_, String>(
         "SELECT password FROM USERS
             WHERE username = $1",
     )
-    .bind(username)
+    .bind(username.as_str())
     .fetch_one(context.pool())
     .await
     {
         Ok(password_hash) => password_hash,
-        Err(_) => return Json(SessionCreateResponse { is_success: false }),
+        Err(_) => return Json(SessionCreateResponse { auth_token: None }).into_response(),
     };
 
     let parsed_hash = PasswordHash::new(&password_hash).unwrap();
     let argon2 = Argon2::default();
 
     match argon2.verify_password(password.as_bytes(), &parsed_hash) {
-        Ok(()) => Json(SessionCreateResponse { is_success: true }),
-        Err(_) => Json(SessionCreateResponse { is_success: false }),
+        Ok(()) => Json(SessionCreateResponse {
+            auth_token: Some("auth_token".to_string()),
+        })
+        .into_response(),
+        Err(_) => Json(SessionCreateResponse { auth_token: None }).into_response(),
     }
 }
 

@@ -19,3 +19,7 @@ export const load: PageServerLoad = async ({ params }) => {
         mon_hocs: request.json(),
     };
 }
+
+export const actions = {
+    default: async () => { }
+}

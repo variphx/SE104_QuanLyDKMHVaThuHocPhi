@@ -1,4 +1,4 @@
-use axum::{body::Body, extract::State, http::StatusCode, response::IntoResponse, Json, Router};
+use axum::{extract::State, http::StatusCode, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
