@@ -33,6 +33,8 @@
     if (!payloads) {
       throw new Error("payloads undefined");
     }
+    let success_count = 0;
+    let failure_count = 0;
 
     for (const payload of payloads) {
       const request = await fetch("http://localhost:8080/api/mon-hoc-mo/post", {
@@ -44,11 +46,14 @@
       });
 
       if (request.ok) {
-        console.log("Mở môn học thành công");
+        success_count += 1;
       } else {
-        console.log("Mở môn học thất bại");
+        console.log(await request.text());
+        failure_count += 1;
       }
     }
+
+    alert(`${success_count} môn học tạo thành công, ${failure_count} thất bại`);
   }
 </script>
 

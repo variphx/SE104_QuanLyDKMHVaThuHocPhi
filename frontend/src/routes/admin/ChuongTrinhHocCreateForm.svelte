@@ -26,6 +26,9 @@
   }
 
   async function submitHandler() {
+    let success_count = 0;
+    let failure_count = 0;
+
     for (let payload of payloads) {
       const request = await fetch(
         "http://localhost:8080/api/chuong-trinh-hoc/post",
@@ -39,9 +42,16 @@
       );
 
       if (request.ok) {
-        alert("Tạo chương trình học thành công");
+        success_count += 1;
+      } else {
+        console.log(await request.text());
+        failure_count += 1;
       }
     }
+
+    alert(
+      `${success_count} chương trình học tạo thành công, ${failure_count} thất bại`,
+    );
   }
 </script>
 

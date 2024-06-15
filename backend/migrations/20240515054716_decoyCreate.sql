@@ -1,7 +1,7 @@
 -- Add migration script here
-INSERT INTO
-    TINH (id, ten)
-VALUES
+insert into
+    tinh (id, ten)
+values
     ('001', 'Hà Nội'),
     ('002', 'Hà Giang'),
     ('004', 'Cao Bằng'),
@@ -66,30 +66,30 @@ VALUES
     ('095', 'Cà Mau'),
     ('096', 'Thành phố Hồ Chí Minh');
 
-INSERT INTO
-    THANH_PHO (id, id_tinh, ten)
-VALUES
+insert into
+    thanh_pho (id, id_tinh, ten)
+values
     ('568', '056', 'Nha Trang');
 
-INSERT INTO
-    KHOA (id, ten)
-VALUES
+insert into
+    khoa (id, ten)
+values
     ('CS', 'Khoa học Máy tính'),
     ('CE', 'Kỹ thuật Máy tính'),
     ('SE', 'Công nghệ Phần mềm');
 
-INSERT INTO
-    NGANH (id, id_khoa, ten)
-VALUES
+insert into
+    nganh (id, id_khoa, ten)
+values
     ('CSCQ', 'CS', 'Khoa học Máy tính (Chính quy)'),
     ('CSAI', 'CS', 'Trí tuệ Nhân tạo'),
     ('CSTN', 'CS', 'Khoa học Máy tính (Chương trình tài năng)'),
     ('CECQ', 'CE', 'Kỹ thuật Máy tính (Chính quy)'),
     ('SECQ', 'SE', 'Công nghệ Phần mềm (Chính quy)');
 
-INSERT INTO
-    HOC_KY (id, ten, nam_hoc)
-VALUES
+insert into
+    hoc_ky (id, ten, nam_hoc)
+values
     ('202201', 'Một', 2022),
     ('202202', 'Hai', 2022),
     ('202203', 'Hè', 2022),
@@ -97,28 +97,23 @@ VALUES
     ('202302', 'Hai', 2023),
     ('202303', 'Hè', 2023);
 
-INSERT INTO
-    CHUONG_TRINH_HOC (id, id_nganh, id_hoc_ky)
-VALUES
+insert into
+    chuong_trinh_hoc (id, id_nganh, id_hoc_ky)
+values
     ('CSCQ202201', 'CSCQ', '202201');
 
-INSERT INTO
-    MON_HOC (id, id_khoa, ten, loai, so_tiet, so_tin_chi)
-VALUES
+insert into
+    mon_hoc (id, id_khoa, ten, loai, so_tiet, so_tin_chi)
+values
     ('CS112', 'CS', 'Phân tích Thiết kế Thuật toán', 'LT', 60, 4);
 
-INSERT INTO
-    MON_HOC_MO (id, id_mon_hoc, id_hoc_ky, id_chuong_trinh_hoc)
-VALUES
-    ('CS112.O14', 'CS112', '202201', 'CSCQ202201');
-
-INSERT INTO
-    DANG_KY_MON_HOC (id, id_sinh_vien, id_hoc_ky)
-VALUES
+insert into
+    dang_ky_mon_hoc (id, id_sinh_vien, id_hoc_ky)
+values
     ('20220001202201', '20220001', '202201');
 
-INSERT INTO
-    THAM_SO (
+insert into
+    tham_so (
         id,
         gia_tin_chi_lt,
         gia_tin_chi_th,
@@ -127,10 +122,10 @@ INSERT INTO
         sinh_vien_len,
         id_hoc_ky
     )
-VALUES
+values
     (1, 27000, 37000, 15, 30, 0, '202201');
 
-INSERT INTO
-    USERS (username, password)
-VALUES
+insert into
+    users (username, password)
+values
     ('admin', '$argon2id$v=19$m=19456,t=2,p=1$YH9SQNsD49f1V1YL6cSLOA$RJTC++oCDiYEjDPxQKyN0XnrG0lmzVjlL/jsXYNLBr8');

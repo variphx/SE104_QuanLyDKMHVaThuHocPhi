@@ -1,4 +1,4 @@
-use axum::{extract::State, Json, Router};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
@@ -43,29 +43,70 @@ pub fn router() -> Router<Context> {
 async fn get(
     State(context): State<Context>,
     Json(payload): Json<MonHocQueryPayload>,
-) -> Result<Json<MonHoc>, ()> {
-    let mon_hoc = sqlx::query_as::<_, MonHoc>(
-        "SELECT * FROM MON_HOC
-            WHERE id = $1",
+) -> impl IntoResponse {
+    match sqlx::query_as::<_, MonHoc>(
+        "select * from mon_hoc
+                where id = $1",
     )
     .bind(payload.id)
     .fetch_one(context.pool())
     .await
-    .unwrap();
-
-    Ok(Json(mon_hoc))
+    {
+        Ok(value) => Json(value).into_response(),
+        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response(),
+    }
 }
 
-async fn post(State(context): State<Context>, Json(payload): Json<MonHocCreatePayload>) {
+async fn post(
+    State(context): State<Context>,
+    Json(payload): Json<MonHocCreatePayload>,
+) -> impl IntoResponse {
     let so_tiet = payload.so_tiet.parse::<i64>().unwrap();
-    sqlx::query(
-        "INSERT INTO MON_HOC (id, id_khoa, ten, loai, so_tiet)
-            VALUES (
+
+    let so_tin_chi = {
+        let he_so_tin_chi_lt = match sqlx::query_scalar::<_, i16>(
+            "select he_so_tin_chi_lt from tham_so
+            where id = 1",
+        )
+        .fetch_one(context.pool())
+        .await
+        {
+            Ok(value) => value,
+            Err(error) => {
+                return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
+            }
+        };
+
+        let he_so_tin_chi_th = match sqlx::query_scalar::<_, i16>(
+            "select he_so_tin_chi_th from tham_so
+            where id = 1",
+        )
+        .fetch_one(context.pool())
+        .await
+        {
+            Ok(value) => value,
+            Err(error) => {
+                return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
+            }
+        };
+
+        so_tiet
+            / match payload.loai.as_str() {
+                "LT" => he_so_tin_chi_lt,
+                "TH" => he_so_tin_chi_th,
+                _ => unreachable!(),
+            } as i64
+    };
+
+    match sqlx::query(
+        "insert into mon_hoc (id, id_khoa, ten, loai, so_tiet, so_tin_chi)
+            values (
                 $1,
                 $2,
                 $3,
                 $4,
-                $5
+                $5,
+                $6
             )",
     )
     .bind(payload.id)
@@ -73,9 +114,13 @@ async fn post(State(context): State<Context>, Json(payload): Json<MonHocCreatePa
     .bind(payload.ten)
     .bind(payload.loai)
     .bind(so_tiet)
+    .bind(so_tin_chi as i16)
     .execute(context.pool())
     .await
-    .unwrap();
+    {
+        Ok(_) => (StatusCode::CREATED).into_response(),
+        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response(),
+    }
 }
 
 async fn patch(
@@ -83,10 +128,10 @@ async fn patch(
     Json(MonHocModifyPayload { id, payload }): Json<MonHocModifyPayload>,
 ) {
     sqlx::query(
-        "UPDATE MON_HOC
-            SET ten = $1,
+        "update mon_hoc
+            set ten = $1,
                 so_tiet = $2
-            WHERE id = $3",
+            where id = $3",
     )
     .bind(payload.ten)
     .bind(payload.so_tiet)
@@ -98,8 +143,8 @@ async fn patch(
 
 async fn delete(State(context): State<Context>, Json(payload): Json<MonHocQueryPayload>) {
     sqlx::query(
-        "DELETE FROM MON_HOC
-            WHERE id = $1",
+        "delete from mon_hoc
+            where id = $1",
     )
     .bind(payload.id)
     .execute(context.pool())

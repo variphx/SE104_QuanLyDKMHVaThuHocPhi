@@ -28,6 +28,8 @@
   }
 
   async function submitHandler() {
+    let success_count = 0;
+    let failure_count = 0;
     for (let payload of payloads) {
       const request = await fetch("http://localhost:8080/api/mon-hoc/post", {
         method: "POST",
@@ -38,11 +40,16 @@
       });
 
       if (request.ok) {
-        console.log("Tạo môn học thành công");
+        success_count += 1;
       } else {
-        console.log("Tạo môn học thất bại");
+        console.log(await request.text());
+        failure_count += 1;
       }
     }
+
+    alert(
+      `${success_count} môn học tạo thành công, ${failure_count} thất bại`,
+    );
   }
 </script>
 

@@ -1,5 +1,5 @@
 use argon2::{password_hash::SaltString, Argon2, PasswordHasher};
-use axum::{extract::State, http::StatusCode, Json, Router};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Json, Router};
 use rand::rngs::OsRng;
 use serde::{Deserialize, Serialize};
 
@@ -74,13 +74,15 @@ async fn get(
 async fn post(
     State(context): State<Context>,
     Json(payload): Json<SinhVienCreatePayload>,
-) -> Result<StatusCode, StatusCode> {
+) -> impl IntoResponse {
     let ngay_sinh = match time::Date::parse(
         &payload.ngay_sinh,
         time::macros::format_description!("[year]-[month]-[day]"),
     ) {
         Ok(ngay_sinh) => ngay_sinh,
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+        Err(error) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
+        }
     };
 
     match sqlx::query(
@@ -113,8 +115,10 @@ async fn post(
     .execute(context.pool())
     .await
     {
-        Ok(_) => {}
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+        Ok(_) => (),
+        Err(error) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
+        }
     };
 
     let password = payload.id.as_bytes();
@@ -124,7 +128,9 @@ async fn post(
 
     let password_hash = match argon2.hash_password(password, &salt) {
         Ok(hash) => hash,
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+        Err(error) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
+        }
     }
     .to_string();
 
@@ -140,8 +146,8 @@ async fn post(
     .execute(context.pool())
     .await
     {
-        Ok(_) => Ok(StatusCode::CREATED),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Ok(_) => (StatusCode::CREATED).into_response(),
+        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response(),
     }
 }
 

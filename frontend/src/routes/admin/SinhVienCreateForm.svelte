@@ -30,6 +30,7 @@
 
   async function submitHandler() {
     let success_count = 0;
+    let failure_count = 0;
 
     for (let payload of payloads) {
       const request = await fetch("http://localhost:8080/api/sinh-vien/post", {
@@ -41,12 +42,16 @@
       });
 
       if (!request.ok) {
+        console.log(await request.text());
+        failure_count += 1;
         continue;
       }
 
       success_count += 1;
     }
-    alert(`${success_count} sinh viên tạo thành công`);
+    alert(
+      `${success_count} sinh viên tạo thành công, ${failure_count} thất bại`,
+    );
   }
 </script>
 

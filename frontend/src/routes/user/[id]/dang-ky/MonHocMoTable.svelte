@@ -34,9 +34,8 @@
       if (request.ok) {
         mon_hocs_created_count += 1;
       }
-
-      alert(`${mon_hocs_created_count} môn học đăng ký thành công`);
     }
+    alert(`${mon_hocs_created_count} môn học đăng ký thành công`);
   }
 
   let selected_id_mon_hocs: string[];
