@@ -5,6 +5,8 @@
   import hljs from "highlight.js/lib/core";
   import "highlight.js/styles/github-dark.css";
   import {
+    AppBar,
+    Avatar,
     Toast,
     initializeStores,
     storeHighlightJs,
@@ -36,5 +38,13 @@
 </script>
 
 <Toast></Toast>
+
+<AppBar background="variant-glass-surface">
+  <svelte:fragment slot="lead">(icon)</svelte:fragment>
+  <span class="h1 font-bold mx-4"> UIT Management System </span>
+  <svelte:fragment slot="trail">
+    <Avatar>(ava)</Avatar>
+  </svelte:fragment>
+</AppBar>
 
 <slot />

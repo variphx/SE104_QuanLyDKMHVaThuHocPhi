@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
+mod chua_dong_hoc_phi;
+
 #[derive(Serialize, sqlx::FromRow)]
 struct SinhVien {
     id: String,
@@ -47,6 +49,10 @@ pub fn router() -> Router<Context> {
         .route("/post", axum::routing::post(post))
         .route("/patch", axum::routing::post(patch))
         .route("/delete", axum::routing::post(delete))
+        .route(
+            "/chua-dong-hoc-phi/get",
+            axum::routing::get(chua_dong_hoc_phi::get),
+        )
 }
 
 async fn get(

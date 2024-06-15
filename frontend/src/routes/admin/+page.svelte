@@ -2,6 +2,7 @@
   import ChuongTrinhHocCreateForm from "./ChuongTrinhHocCreateForm.svelte";
   import MonHocCreateForm from "./MonHocCreateForm.svelte";
   import MonHocMoCreateForm from "./MonHocMoCreateForm.svelte";
+  import PhieuThuHocPhiCreateForm from "./PhieuThuHocPhiCreateForm.svelte";
   import SinhVienCreateForm from "./SinhVienCreateForm.svelte";
 </script>
 
@@ -18,6 +19,20 @@
     </div>
     <div class="p-12 rounded-2xl variant-glass-surface">
       <MonHocMoCreateForm></MonHocMoCreateForm>
+    </div>
+    <div>
+      <PhieuThuHocPhiCreateForm></PhieuThuHocPhiCreateForm>
+    </div>
+    <div class="mt-4">
+      <div class="w-full">
+        <div class="w-fit mx-auto">
+          <a
+            href="/admin/sinh-vien-chua-hoan-thanh-hoc-phi"
+            class="variant-filled-primary text-center px-8 py-4 rounded-full w-fit"
+            >Sinh viên chưa hoàn thành học phí</a
+          >
+        </div>
+      </div>
     </div>
   </div>
 </div>

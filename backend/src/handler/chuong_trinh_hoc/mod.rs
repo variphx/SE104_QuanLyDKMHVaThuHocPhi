@@ -1,4 +1,4 @@
-use axum::{extract::State, http::StatusCode, Json, Router};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
@@ -33,7 +33,7 @@ pub fn router() -> Router<Context> {
 async fn get(
     State(context): State<Context>,
     Json(payload): Json<ChuongTrinhHocQueryPayload>,
-) -> Result<Json<ChuongTrinhHoc>, StatusCode> {
+) -> impl IntoResponse {
     let chuong_trinh_hoc = match sqlx::query_as::<_, ChuongTrinhHoc>(
         "SELECT * FROM CHUONG_TRINH_HOC
             WHERE id = $1",
@@ -43,16 +43,18 @@ async fn get(
     .await
     {
         Ok(chuong_trinh_hoc) => chuong_trinh_hoc,
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+        Err(error) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
+        }
     };
 
-    Ok(Json(chuong_trinh_hoc))
+    Json(chuong_trinh_hoc).into_response()
 }
 
 async fn post(
     State(context): State<Context>,
     Json(payload): Json<ChuongTrinhHocCreatePayload>,
-) -> Result<StatusCode, StatusCode> {
+) -> impl IntoResponse {
     let id = format!("{}{}", payload.id_nganh, payload.id_hoc_ky);
 
     match sqlx::query(
@@ -69,7 +71,7 @@ async fn post(
     .execute(context.pool())
     .await
     {
-        Ok(_) => Ok(StatusCode::CREATED),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Ok(_) => (StatusCode::CREATED).into_response(),
+        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response(),
     }
 }

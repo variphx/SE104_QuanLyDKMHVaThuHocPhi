@@ -7,14 +7,13 @@ export const load: PageServerLoad = async ({ cookies }) => {
         if (cookies.get("user") == "admin") {
             redirect(302, '/admin')
         } else {
-            redirect(302, `/user/${cookies.get("user")}/dang-ky`);
+            redirect(302, `/user/${cookies.get("user")}`);
         }
     }
 }
 
 export const actions = {
     login: async ({ cookies, request }) => {
-
         const data = await request.formData();
         const username = data.get('username')?.toString();
         const password = data.get('password')?.toString();
@@ -22,7 +21,6 @@ export const actions = {
         if (!username || !password) {
             return { is_success: false };
         }
-
 
         const temp = await fetch('http://localhost:8080/api/user/get', {
             method: "POST",
@@ -36,8 +34,6 @@ export const actions = {
         });
 
         const response = await temp.json();
-        console.log(response);
-
 
         if (response.auth_token) {
             cookies.set('sessionid', response.auth_token, { path: '/', expires: new Date(Date.now() + 3600000), httpOnly: true, });
@@ -50,7 +46,7 @@ export const actions = {
             redirect(302, '/admin');
         } else {
             cookies.set('user', username, { path: '/', expires: new Date(Date.now() + 3600000), httpOnly: true })
-            redirect(302, `/user/${username}/dang-ky`);
+            redirect(302, `/user/${username}`);
         }
     }
 }

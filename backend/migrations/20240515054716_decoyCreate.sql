@@ -92,14 +92,9 @@ VALUES
     ('CSCQ202201', 'CSCQ', '202201');
 
 INSERT INTO
-    SINH_VIEN (id, ten, ngay_sinh, id_gioi_tinh, id_que_quan, id_doi_tuong, id_chuong_trinh_hoc)
+    MON_HOC (id, id_khoa, ten, loai, so_tiet, so_tin_chi)
 VALUES
-    ('20220001', 'Huỳnh Anh Dũng', '2004-09-06', 'Nam', '568', '0', 'CSCQ202201');
-
-INSERT INTO
-    MON_HOC (id, id_khoa, ten, loai, so_tiet)
-VALUES
-    ('CS112', 'CS', 'Phân tích Thiết kế Thuật toán', 'LT', 60);
+    ('CS112', 'CS', 'Phân tích Thiết kế Thuật toán', 'LT', 60, 4);
 
 INSERT INTO
     MON_HOC_MO (id, id_mon_hoc, id_hoc_ky, id_chuong_trinh_hoc)
@@ -110,11 +105,6 @@ INSERT INTO
     DANG_KY_MON_HOC (id, id_sinh_vien, id_hoc_ky)
 VALUES
     ('20220001202201', '20220001', '202201');
-
-INSERT INTO
-    HOC_PHI (tong, da_thanh_toan, id_hoc_ky, id_sinh_vien)
-VALUES
-    (14000000, 0, '202201', '20220001');
 
 INSERT INTO
     THAM_SO (
@@ -128,3 +118,8 @@ INSERT INTO
     )
 VALUES
     (1, 27000, 37000, 15, 30, 0, '202201');
+
+INSERT INTO
+    USERS (username, password)
+VALUES
+    ('admin', '$argon2id$v=19$m=19456,t=2,p=1$YH9SQNsD49f1V1YL6cSLOA$RJTC++oCDiYEjDPxQKyN0XnrG0lmzVjlL/jsXYNLBr8');

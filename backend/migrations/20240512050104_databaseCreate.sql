@@ -104,6 +104,7 @@ CREATE TABLE
         ten TEXT NOT NULL,
         loai TEXT NOT NULL,
         so_tiet INT NOT NULL,
+        so_tin_chi SMALLINT NOT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY (loai) REFERENCES LOAI_MON_HOC (ten),
         FOREIGN KEY (id_khoa) REFERENCES KHOA (id)
