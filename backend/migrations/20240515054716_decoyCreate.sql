@@ -74,17 +74,28 @@ VALUES
 INSERT INTO
     KHOA (id, ten)
 VALUES
-    ('CS', 'Khoa học Máy tính');
+    ('CS', 'Khoa học Máy tính'),
+    ('CE', 'Kỹ thuật Máy tính'),
+    ('SE', 'Công nghệ Phần mềm');
 
 INSERT INTO
     NGANH (id, id_khoa, ten)
 VALUES
-    ('CSCQ', 'CS', 'Khoa học Máy tính (Chính quy)');
+    ('CSCQ', 'CS', 'Khoa học Máy tính (Chính quy)'),
+    ('CSAI', 'CS', 'Trí tuệ Nhân tạo'),
+    ('CSTN', 'CS', 'Khoa học Máy tính (Chương trình tài năng)'),
+    ('CECQ', 'CE', 'Kỹ thuật Máy tính (Chính quy)'),
+    ('SECQ', 'SE', 'Công nghệ Phần mềm (Chính quy)');
 
 INSERT INTO
     HOC_KY (id, ten, nam_hoc)
 VALUES
-    ('202201', 'Một', 2022);
+    ('202201', 'Một', 2022),
+    ('202202', 'Hai', 2022),
+    ('202203', 'Hè', 2022),
+    ('202301', 'Một', 2023),
+    ('202302', 'Hai', 2023),
+    ('202303', 'Hè', 2023);
 
 INSERT INTO
     CHUONG_TRINH_HOC (id, id_nganh, id_hoc_ky)
@@ -99,7 +110,7 @@ VALUES
 INSERT INTO
     MON_HOC_MO (id, id_mon_hoc, id_hoc_ky, id_chuong_trinh_hoc)
 VALUES
-    ('temp', 'CS112', '202201', 'CSCQ202201');
+    ('CS112.O14', 'CS112', '202201', 'CSCQ202201');
 
 INSERT INTO
     DANG_KY_MON_HOC (id, id_sinh_vien, id_hoc_ky)
