@@ -2,12 +2,10 @@ import { redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 
 import argon2 from "@node-rs/argon2";
-import { tableSourceMapper } from "@skeletonlabs/skeleton";
 
 export const load: PageServerLoad = async ({}) => {};
 
 export const actions = {
-  // default: async () => {},
   login: async ({ request, cookies, fetch }) => {
     const data = await request.formData();
 
@@ -65,11 +63,10 @@ export const actions = {
         throw new Error(await session_id_request.text());
       }
 
-      const session_id_status = session_id_request.status;
-
-      if (session_id_status === 200) {
+      if (session_id_request.status === 201) {
         cookies.set("session_id", session_id.toString(), {
           path: "/",
+          expires: new Date(Date.now() + 60 * 15 * 1000),
           httpOnly: true,
           secure: true,
         });

@@ -4,23 +4,23 @@
   import { page } from "$app/stores";
 
   export let data: LayoutData;
-  const user_id = data.user_id;
+  const username = data.username;
 </script>
 
 <div class="w-full h-screen grid grid-cols-[auto_1fr]">
   <AppRail width="w-36">
     <svelte:fragment slot="lead">
       <AppRailAnchor
-        href="/user/{user_id}"
-        selected={$page.url.pathname === `/user/${user_id}`}
+        href="/user/{username}"
+        selected={$page.url.pathname === `/user/${username}`}
       >
         <svelte:fragment slot="lead">(icon)</svelte:fragment>
         <span>Trang chủ</span>
       </AppRailAnchor>
     </svelte:fragment>
     <AppRailAnchor
-      href="/user/{user_id}/hoc-phan/dang-ky"
-      selected={$page.url.pathname === `/user/${user_id}/hoc-phan/dang-ky`}
+      href="/user/{username}/hoc-phan/dang-ky"
+      selected={$page.url.pathname === `/user/${username}/hoc-phan/dang-ky`}
     >
       <svelte:fragment slot="lead">(icon)</svelte:fragment>
       <span>Đăng ký</span>

@@ -7,13 +7,11 @@
 </script>
 
 <div class="grid grid-rows-[auto_1fr] h-screen">
-  <div class="w-screen">
-    <h1
-      class="h2 md:h1 uppercase mx-auto variant-glass-surface px-8 py-4 rounded-full mt-8 w-fit"
-    >
-      Thông tin sinh viên
-    </h1>
-  </div>
+  <h1
+    class="h2 md:h1 uppercase mx-auto variant-glass-surface px-8 py-4 rounded-full mt-8 w-fit"
+  >
+    Thông tin sinh viên
+  </h1>
 
   <div class="mx-auto my-auto w-2/3 md:w-2/5">
     <div class="grid grid-cols-2 gap-2 bg-surface-50 px-8 py-4 rounded-3xl">

@@ -6,6 +6,7 @@ import { get_chuong_trinh_hoc } from "$lib/api/get_chuong_trinh_hoc";
 import { get_nganh } from "$lib/api/get_nganh";
 import { get_khoa } from "$lib/api/get_khoa";
 import { get_hoc_ky } from "$lib/api/get_hoc_ky";
+import type { Actions } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({ params }) => {
   const id_sinh_vien = params.id;
@@ -32,4 +33,8 @@ export const load: PageServerLoad = async ({ params }) => {
       hoc_ky_nhap_hoc: hoc_ky,
     },
   };
+};
+
+export const actions: Actions = {
+  _prevent_default: () => {}
 };

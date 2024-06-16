@@ -5,7 +5,8 @@
   import hljs from "highlight.js/lib/core";
   import "highlight.js/styles/github-dark.css";
   import {
-  Modal,
+    AppBar,
+    Modal,
     Toast,
     initializeStores,
     storeHighlightJs,
