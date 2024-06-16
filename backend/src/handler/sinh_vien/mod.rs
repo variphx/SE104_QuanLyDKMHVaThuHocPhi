@@ -9,12 +9,8 @@ mod chua_dong_hoc_phi;
 
 #[derive(Serialize, sqlx::FromRow)]
 struct SinhVien {
-    id: String,
     ten: String,
-    can_cuoc: String,
     ngay_sinh: String,
-    so_dien_thoai: String,
-    email: String,
     id_gioi_tinh: String,
     id_que_quan: String,
     id_doi_tuong: String,
@@ -30,11 +26,6 @@ struct SinhVienCreatePayload {
     id_que_quan: String,
     id_doi_tuong: String,
     id_chuong_trinh_hoc: String,
-}
-
-#[derive(Deserialize)]
-struct SinhVienQueryPayload {
-    id: String,
 }
 
 #[derive(Deserialize)]
@@ -55,15 +46,12 @@ pub fn router() -> Router<Context> {
         )
 }
 
-async fn get(
-    State(context): State<Context>,
-    Json(payload): Json<SinhVienQueryPayload>,
-) -> Json<SinhVien> {
+async fn get(State(context): State<Context>, Json(id): Json<String>) -> Json<SinhVien> {
     let sinh_vien = sqlx::query_as::<_, SinhVien>(
-        "SELECT * FROM SINH_VIEN
+        "SELECT ten, TO_CHAR(ngay_sinh, 'YYYY-MM-DD') as ngay_sinh, id_gioi_tinh, id_que_quan, id_doi_tuong, id_chuong_trinh_hoc FROM SINH_VIEN
             WHERE id = $1",
     )
-    .bind(payload.id)
+    .bind(id)
     .fetch_one(context.pool())
     .await
     .unwrap();
@@ -75,16 +63,6 @@ async fn post(
     State(context): State<Context>,
     Json(payload): Json<SinhVienCreatePayload>,
 ) -> impl IntoResponse {
-    let ngay_sinh = match time::Date::parse(
-        &payload.ngay_sinh,
-        time::macros::format_description!("[year]-[month]-[day]"),
-    ) {
-        Ok(ngay_sinh) => ngay_sinh,
-        Err(error) => {
-            return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
-        }
-    };
-
     match sqlx::query(
         "INSERT INTO SINH_VIEN (
             id,
@@ -98,7 +76,7 @@ async fn post(
         VALUES (
             $1,
             $2,
-            $3,
+            TO_DATE($3, 'YYYY-MM-DD'),
             $4,
             $5,
             $6,
@@ -107,7 +85,7 @@ async fn post(
     )
     .bind(&payload.id)
     .bind(&payload.ten)
-    .bind(ngay_sinh)
+    .bind(&payload.ngay_sinh)
     .bind(&payload.id_gioi_tinh)
     .bind(&payload.id_que_quan)
     .bind(&payload.id_doi_tuong)
@@ -202,12 +180,12 @@ async fn patch(
     .unwrap();
 }
 
-async fn delete(State(context): State<Context>, Json(payload): Json<SinhVienQueryPayload>) {
+async fn delete(State(context): State<Context>, Json(id): Json<String>) {
     sqlx::query(
         "DELETE FROM SINH_VIEN
             WHERE id = $1",
     )
-    .bind(payload.id)
+    .bind(id)
     .execute(context.pool())
     .await
     .unwrap();

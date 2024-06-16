@@ -12,10 +12,7 @@ struct User {
 }
 
 #[derive(Deserialize)]
-struct UserLoginPayload {
-    username: String,
-    password: String,
-}
+struct UserLoginPayload(String);
 
 pub fn router() -> Router<Context> {
     Router::new()
@@ -25,16 +22,11 @@ pub fn router() -> Router<Context> {
         .route("/delete", axum::routing::post(delete))
 }
 
-#[derive(Serialize)]
-struct SessionCreateResponse {
-    auth_token: Option<String>,
-}
-
 async fn get(
     State(context): State<Context>,
-    Json(UserLoginPayload { username, password }): Json<UserLoginPayload>,
+    Json(UserLoginPayload(username)): Json<UserLoginPayload>,
 ) -> impl IntoResponse {
-    let password_hash = match sqlx::query_scalar::<_, String>(
+    match sqlx::query_scalar::<_, String>(
         "SELECT password FROM USERS
             WHERE username = $1",
     )
@@ -42,19 +34,8 @@ async fn get(
     .fetch_one(context.pool())
     .await
     {
-        Ok(password_hash) => password_hash,
-        Err(_) => return Json(SessionCreateResponse { auth_token: None }).into_response(),
-    };
-
-    let parsed_hash = PasswordHash::new(&password_hash).unwrap();
-    let argon2 = Argon2::default();
-
-    match argon2.verify_password(password.as_bytes(), &parsed_hash) {
-        Ok(()) => Json(SessionCreateResponse {
-            auth_token: Some("auth_token".to_string()),
-        })
-        .into_response(),
-        Err(_) => Json(SessionCreateResponse { auth_token: None }).into_response(),
+        Ok(password_hash) => Json(password_hash).into_response(),
+        Err(error) => (StatusCode::NOT_FOUND, format!("{:?}", error)).into_response(),
     }
 }
 

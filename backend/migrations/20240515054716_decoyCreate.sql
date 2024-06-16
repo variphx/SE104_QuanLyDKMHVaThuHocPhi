@@ -103,6 +103,11 @@ values
     ('CSCQ202201', 'CSCQ', '202201');
 
 insert into
+    sinh_vien (id, ten, ngay_sinh, id_gioi_tinh, id_que_quan, id_doi_tuong, id_chuong_trinh_hoc)
+values
+    ('20220001', 'Huỳnh Anh Dũng', '2004-09-06', 'Nam', '568', '0', 'CSCQ202201');
+
+insert into
     mon_hoc (id, id_khoa, ten, loai, so_tiet, so_tin_chi)
 values
     ('CS112', 'CS', 'Phân tích Thiết kế Thuật toán', 'LT', 60, 4);
@@ -128,4 +133,5 @@ values
 insert into
     users (username, password)
 values
-    ('admin', '$argon2id$v=19$m=19456,t=2,p=1$YH9SQNsD49f1V1YL6cSLOA$RJTC++oCDiYEjDPxQKyN0XnrG0lmzVjlL/jsXYNLBr8');
+    ('admin', '$argon2id$v=19$m=19456,t=2,p=1$YH9SQNsD49f1V1YL6cSLOA$RJTC++oCDiYEjDPxQKyN0XnrG0lmzVjlL/jsXYNLBr8'),
+    ('20220001', '$argon2id$v=19$m=1945,t=2,p=1$ZXJ3Mnl6ekduNU03QkxGRA$ZXaH/ImJpcGN2hoJV1GVwXC1P3KMYzJWMBj2OgTnPmo');

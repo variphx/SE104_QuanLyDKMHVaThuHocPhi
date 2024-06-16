@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
+mod khoa;
 mod nganh;
 
 #[derive(Serialize, sqlx::FromRow)]
@@ -10,11 +11,6 @@ struct ChuongTrinhHoc {
     id: String,
     id_hoc_ky: String,
     id_nganh: String,
-}
-
-#[derive(Deserialize)]
-struct ChuongTrinhHocQueryPayload {
-    id: String,
 }
 
 #[derive(Deserialize)]
@@ -27,18 +23,16 @@ pub fn router() -> Router<Context> {
     Router::new()
         .route("/get", axum::routing::post(get))
         .route("/post", axum::routing::post(post))
-        .route("/nganh/get", axum::routing::get(nganh::get))
+        .route("/nganh/get", axum::routing::post(nganh::get))
+        .route("/khoa/get", axum::routing::post(khoa::get))
 }
 
-async fn get(
-    State(context): State<Context>,
-    Json(payload): Json<ChuongTrinhHocQueryPayload>,
-) -> impl IntoResponse {
+async fn get(State(context): State<Context>, Json(id): Json<String>) -> impl IntoResponse {
     let chuong_trinh_hoc = match sqlx::query_as::<_, ChuongTrinhHoc>(
         "SELECT * FROM CHUONG_TRINH_HOC
             WHERE id = $1",
     )
-    .bind(&payload.id)
+    .bind(&id)
     .fetch_one(context.pool())
     .await
     {

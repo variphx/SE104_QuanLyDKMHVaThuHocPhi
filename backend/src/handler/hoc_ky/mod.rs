@@ -1,18 +1,12 @@
-use axum::{extract::State, http::StatusCode, Json, Router};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Json, Router};
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
 #[derive(Serialize, sqlx::FromRow)]
 struct HocKy {
-    id: String,
     ten: String,
-    nam: i32,
-}
-
-#[derive(Deserialize)]
-struct HocKyQueryPayload {
-    id: String,
+    nam_hoc: i32,
 }
 
 #[derive(Deserialize)]
@@ -25,23 +19,20 @@ pub fn router() -> Router<Context> {
     Router::new()
         .route("/get", axum::routing::post(get))
         .route("/post", axum::routing::post(post))
-        .route("/delete", axum::routing::post(delete))
 }
 
-async fn get(
-    State(context): State<Context>,
-    Json(HocKyQueryPayload { id }): Json<HocKyQueryPayload>,
-) -> Result<Json<HocKy>, StatusCode> {
-    let hoc_ky = sqlx::query_as::<_, HocKy>(
-        "SELECT * FROM HOC_KY
-            WHERE id = $1",
+async fn get(State(context): State<Context>, Json(id): Json<String>) -> impl IntoResponse {
+    match sqlx::query_as::<_, HocKy>(
+        "SELECT ten, nam_hoc FROM HOC_KY
+                WHERE id = $1",
     )
     .bind(id)
     .fetch_one(context.pool())
     .await
-    .unwrap();
-
-    Ok(Json(hoc_ky))
+    {
+        Ok(value) => Json(value).into_response(),
+        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response(),
+    }
 }
 
 async fn post(
@@ -61,22 +52,6 @@ async fn post(
     .bind(id)
     .bind(ten)
     .bind(nam_hoc)
-    .execute(context.pool())
-    .await
-    .unwrap();
-
-    Ok(())
-}
-
-async fn delete(
-    State(context): State<Context>,
-    Json(HocKyQueryPayload { id }): Json<HocKyQueryPayload>,
-) -> Result<(), ()> {
-    sqlx::query(
-        "DELETE FROM HOC_KY
-            WHERE id = $1",
-    )
-    .bind(id)
     .execute(context.pool())
     .await
     .unwrap();

@@ -9,14 +9,8 @@ pub mod vung_mien;
 #[derive(Serialize, sqlx::FromRow)]
 struct DoiTuong {
     id: String,
-    id_loai_doi_tuong: String,
     ten: String,
-    mien_giam: f64,
-}
-
-#[derive(Deserialize)]
-struct DoiTuongQueryPayload {
-    id: String,
+    he_so_hoc_phi: f64,
 }
 
 #[derive(Deserialize)]
@@ -37,13 +31,13 @@ pub fn router() -> Router<Context> {
 
 async fn get(
     State(context): State<Context>,
-    Json(payload): Json<DoiTuongQueryPayload>,
+    Json(id): Json<String>,
 ) -> Result<Json<DoiTuong>, StatusCode> {
     let doi_tuong = sqlx::query_as::<_, DoiTuong>(
-        "SELECT * FROM DOI_TUONG
+        "SELECT id, ten, he_so_hoc_phi FROM DOI_TUONG
             WHERE id = $1",
     )
-    .bind(payload.id)
+    .bind(id)
     .fetch_one(context.pool())
     .await
     .unwrap();
@@ -86,10 +80,7 @@ async fn patch(
     Ok(())
 }
 
-async fn delete(
-    State(context): State<Context>,
-    Json(DoiTuongQueryPayload { id }): Json<DoiTuongQueryPayload>,
-) -> Result<(), StatusCode> {
+async fn delete(State(context): State<Context>, Json(id): Json<String>) -> Result<(), StatusCode> {
     sqlx::query(
         "DELETE FROM DOI_TUONG
             WHERE id = $1",

@@ -2,8 +2,7 @@ import { join } from 'path'
 import type { Config } from 'tailwindcss'
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
-import { skeleton } from '@skeletonlabs/tw-plugin';
-import { UIT } from './src/UIT'
+import { skeleton } from '@skeletonlabs/tw-plugin'
 
 export default {
 	darkMode: 'class',
@@ -16,13 +15,12 @@ export default {
 		typography,
 		skeleton({
 			themes: {
-				custom: [
-					UIT,
-				],
 				preset: [
-					{ name: 'modern', enhancements: true },
-					{ name: 'wintry', enhancements: true }
-				]
+					{
+						name: 'modern',
+						enhancements: true,
+					},
+				],
 			},
 		}),
 	],

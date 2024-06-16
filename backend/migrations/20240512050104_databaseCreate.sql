@@ -7,6 +7,14 @@ create table
     );
 
 create table
+    session (
+        id bigint,
+        username text not null,
+        primary key (id),
+        foreign key (username) references users (username)
+    );
+
+create table
     tinh (id text, ten text not null, primary key (id));
 
 create table
@@ -45,7 +53,7 @@ create table
 insert into
     doi_tuong (id, ten, he_so_hoc_phi)
 values
-    ('0', 'đối tượng phổ thông', 1.0);
+    ('0', 'Đối tượng phổ thông', 1.0);
 
 create table
     khoa (id text, ten text not null, primary key (id));

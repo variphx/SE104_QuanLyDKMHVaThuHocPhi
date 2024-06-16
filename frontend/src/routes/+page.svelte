@@ -1,15 +1,30 @@
-<!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
+<script lang="ts">
+  </script>
 
-<div class="container h-full mx-auto flex justify-center items-center">
-	<div class="space-y-5">
-		<h1 class="h1">Let's get cracking bones!</h1>
-		<p>Start by exploring:</p>
-		<ul>
-			<li><code class="code">/src/routes/+layout.svelte</code> - barebones layout</li>
-			<li><code class="code">/src/app.postcss</code> - app wide css</li>
-			<li>
-				<code class="code">/src/routes/+page.svelte</code> - this page, you can replace the contents
-			</li>
-		</ul>
-	</div>
+<div class="flex flex-col min-h-screen">
+  <div class="mx-auto my-auto w-4/5 md:w-1/3 xl:w-1/4">
+    <form
+      method="POST"
+      action="?/login"
+      class="px-8 py-4 variant-glass-surface rounded-lg"
+    >
+      <label class="lable my-2">
+        <span> Mã công chức/sinh viên </span>
+        <input class="input" type="text" name="username" />
+      </label>
+
+      <lable class="label my-2">
+        <span> Mật khẩu </span>
+        <input class="input" type="password" name="password" />
+      </lable>
+
+      <div class="flex flex-col mt-4">
+        <div class="mx-auto my-auto">
+          <button class="btn variant-filled mx-auto" type="submit"
+            >Đăng nhập</button
+          >
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
