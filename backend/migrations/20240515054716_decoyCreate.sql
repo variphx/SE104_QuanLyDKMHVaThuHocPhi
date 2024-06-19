@@ -125,10 +125,11 @@ insert into
         he_so_tin_chi_lt,
         he_so_tin_chi_th,
         sinh_vien_len,
-        id_hoc_ky
+        id_hoc_ky,
+        is_mo_dkmh
     )
 values
-    (1, 27000, 37000, 15, 30, 0, '202201');
+    (1, 27000, 37000, 15, 30, 0, '202201', true);
 
 insert into
     users (username, password)

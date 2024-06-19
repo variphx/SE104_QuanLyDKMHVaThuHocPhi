@@ -193,5 +193,6 @@ create table
         he_so_tin_chi_th smallint not null,
         sinh_vien_len int not null,
         id_hoc_ky text not null,
+        is_mo_dkmh bool not null,
         foreign key (id_hoc_ky) references hoc_ky (id)
     );
