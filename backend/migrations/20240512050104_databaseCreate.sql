@@ -43,17 +43,12 @@ create table
 
 create table
     doi_tuong_vung_mien (
-        id text,
+        id text not null,
         id_thanh_pho text not null,
-        primary key (id),
+        primary key (id, id_thanh_pho),
         foreign key (id) references doi_tuong (id),
         foreign key (id_thanh_pho) references thanh_pho (id)
     );
-
-insert into
-    doi_tuong (id, ten, he_so_hoc_phi)
-values
-    ('0', 'Đối tượng phổ thông', 1.0);
 
 create table
     khoa (id text, ten text not null, primary key (id));

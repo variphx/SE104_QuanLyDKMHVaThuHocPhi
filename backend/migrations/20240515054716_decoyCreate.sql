@@ -72,6 +72,23 @@ values
     ('568', '056', 'Nha Trang');
 
 insert into
+    doi_tuong (id, ten, he_so_hoc_phi)
+values
+    ('_default', 'Đối tượng phổ thông', 1.0),
+    ('DTCS001', 'Con/cháu người có công với cách mạng', 0.5),
+    ('DTVM001', 'Khu vực 2', 1.0);
+
+insert into
+    doi_tuong_chinh_sach (id)
+values
+    ('DTCS001');
+
+insert into
+    doi_tuong_vung_mien (id, id_thanh_pho)
+values
+    ('DTVM001', '568');
+
+insert into
     khoa (id, ten)
 values
     ('CS', 'Khoa học Máy tính'),
@@ -105,7 +122,7 @@ values
 insert into
     sinh_vien (id, ten, ngay_sinh, id_gioi_tinh, id_que_quan, id_doi_tuong, id_chuong_trinh_hoc)
 values
-    ('20220001', 'Huỳnh Anh Dũng', '2004-09-06', 'Nam', '568', '0', 'CSCQ202201');
+    ('20220001', 'Huỳnh Anh Dũng', '2004-09-06', 'Nam', '568', '_default', 'CSCQ202201');
 
 insert into
     mon_hoc (id, id_khoa, ten, loai, so_tiet, so_tin_chi)
