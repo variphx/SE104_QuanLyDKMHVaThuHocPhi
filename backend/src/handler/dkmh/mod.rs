@@ -1,8 +1,9 @@
-use axum::{extract::State, http::StatusCode, Json, Router};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Json, Router};
+use serde::Deserialize;
 
 use crate::context::Context;
 
-#[derive(serde::Deserialize)]
+#[derive(Deserialize)]
 struct ChiTietDangKyMonHocCreatePayload {
     id_mon_hoc: String,
     id_sinh_vien: String,
@@ -15,7 +16,7 @@ pub fn router() -> Router<Context> {
 async fn post(
     State(context): State<Context>,
     Json(payload): Json<ChiTietDangKyMonHocCreatePayload>,
-) -> Result<StatusCode, StatusCode> {
+) -> impl IntoResponse {
     let id_hoc_ky = match sqlx::query_scalar::<_, String>(
         "SELECT id_hoc_ky FROM THAM_SO
             WHERE id = 1",
@@ -24,7 +25,9 @@ async fn post(
     .await
     {
         Ok(value) => value,
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+        Err(error) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response()
+        }
     };
 
     let id_dang_ky_mon_hoc = match sqlx::query_scalar::<_, String>(
@@ -38,7 +41,9 @@ async fn post(
     .await
     {
         Ok(value) => value,
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR)?,
+        Err(error) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response()
+        }
     };
 
     match sqlx::query(
@@ -53,7 +58,27 @@ async fn post(
     .execute(context.pool())
     .await
     {
-        Ok(_) => Ok(StatusCode::CREATED),
-        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Ok(_) => (StatusCode::CREATED).into_response(),
+        Err(_) => (StatusCode::INTERNAL_SERVER_ERROR).into_response(),
     }
+}
+
+#[derive(Deserialize)]
+struct ChiTietDangKyMonHocQueryPayload {
+    id_sinh_vien: String,
+    id_hoc_ky: String,
+}
+
+struct ChiTietDangKyMonHoc {
+    id_mon_hoc: String,
+}
+
+async fn get(
+    State(context): State<Context>,
+    Json(ChiTietDangKyMonHocQueryPayload {
+        id_sinh_vien,
+        id_hoc_ky,
+    }): Json<ChiTietDangKyMonHocQueryPayload>,
+) -> impl IntoResponse {
+    todo!()
 }

@@ -17,6 +17,6 @@ pub async fn get(State(context): State<Context>, Json(id): Json<String>) -> impl
     .await
     {
         Ok(value) => Json(value).into_response(),
-        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response(),
+        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response(),
     }
 }
