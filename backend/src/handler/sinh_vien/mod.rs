@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
+mod all;
 mod chua_dong_hoc_phi;
 
 #[derive(Serialize, sqlx::FromRow)]
@@ -43,12 +44,13 @@ pub fn router() -> Router<Context> {
             "/chua-dong-hoc-phi/get",
             axum::routing::get(chua_dong_hoc_phi::get),
         )
+        .nest("/all", all::router())
 }
 
 async fn get(State(context): State<Context>, Json(id): Json<String>) -> Json<SinhVien> {
     let sinh_vien = sqlx::query_as::<_, SinhVien>(
-        "SELECT ten, TO_CHAR(ngay_sinh, 'YYYY-MM-DD') as ngay_sinh, id_gioi_tinh, id_que_quan, id_doi_tuong, id_chuong_trinh_hoc FROM SINH_VIEN
-            WHERE id = $1",
+        "select ten, to_char(ngay_sinh, 'yyyy-mm-dd') as ngay_sinh, id_gioi_tinh, id_que_quan, id_doi_tuong, id_chuong_trinh_hoc from sinh_vien
+            where id = $1",
     )
     .bind(id)
     .fetch_one(context.pool())
