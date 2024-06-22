@@ -3,6 +3,9 @@ use serde::Serialize;
 
 use crate::context::Context;
 
+mod thanh_pho;
+mod tinh;
+
 #[derive(Serialize, sqlx::FromRow)]
 struct QueQuan {
     thanh_pho: String,
@@ -10,7 +13,10 @@ struct QueQuan {
 }
 
 pub fn router() -> Router<Context> {
-    Router::new().route("/get", axum::routing::post(get))
+    Router::new()
+        .route("/get", axum::routing::post(get))
+        .nest("/thanh-pho", thanh_pho::router())
+        .nest("/tinh", tinh::router())
 }
 
 async fn get(State(context): State<Context>, Json(id): Json<String>) -> impl IntoResponse {

@@ -6,6 +6,8 @@ use crate::context::Context;
 pub mod chinh_sach;
 pub mod vung_mien;
 
+mod options;
+
 #[derive(Serialize, sqlx::FromRow)]
 struct DoiTuong {
     id: String,
@@ -27,6 +29,7 @@ pub fn router() -> Router<Context> {
         .route("/delete", axum::routing::post(delete))
         .route("/chinh-sach/post", axum::routing::post(chinh_sach::post))
         .route("/vung-mien/post", axum::routing::post(vung_mien::post))
+        .nest("/options", options::router())
 }
 
 async fn get(

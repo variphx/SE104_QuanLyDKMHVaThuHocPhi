@@ -22,8 +22,8 @@ pub fn router() -> Router<Context> {
     Router::new()
         .route("/get", axum::routing::post(get))
         .route("/post", axum::routing::post(post))
-        .route("/nganh/get", axum::routing::post(nganh::get))
-        .route("/khoa/get", axum::routing::post(khoa::get))
+        .nest("/nganh", nganh::router())
+        .nest("/khoa", khoa::router())
 }
 
 async fn get(State(context): State<Context>, Json(id): Json<String>) -> impl IntoResponse {

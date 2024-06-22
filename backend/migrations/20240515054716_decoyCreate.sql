@@ -81,6 +81,7 @@ values
 insert into
     doi_tuong_chinh_sach (id)
 values
+    ('_default'),
     ('DTCS001');
 
 insert into
