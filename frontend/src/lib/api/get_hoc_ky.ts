@@ -11,10 +11,5 @@ export const get_hoc_ky = async (id: string) => {
     throw new Error(await response.text());
   }
 
-  const data = await response.json();
-
-  return {
-    nam_hoc: data.nam_hoc,
-    ten: data.ten,
-  };
+  return response.json();
 };

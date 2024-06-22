@@ -11,10 +11,5 @@ export const get_nganh = async (id: string) => {
     throw new Error(await response.text());
   }
 
-  const data = await response.json();
-
-  return {
-    ten: data.ten,
-    id_khoa: data.id_khoa,
-  };
+  return response.json();
 };

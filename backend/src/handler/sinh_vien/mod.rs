@@ -19,13 +19,12 @@ struct SinhVien {
 
 #[derive(Deserialize)]
 struct SinhVienCreatePayload {
-    id: String,
     ten: String,
     ngay_sinh: String,
     id_gioi_tinh: String,
     id_que_quan: String,
     id_doi_tuong: String,
-    id_chuong_trinh_hoc: String,
+    id_nganh: String,
 }
 
 #[derive(Deserialize)]
@@ -61,10 +60,67 @@ async fn get(State(context): State<Context>, Json(id): Json<String>) -> Json<Sin
 
 async fn post(
     State(context): State<Context>,
-    Json(payload): Json<SinhVienCreatePayload>,
+    Json(SinhVienCreatePayload {
+        ten,
+        ngay_sinh,
+        id_gioi_tinh,
+        id_que_quan,
+        id_doi_tuong,
+        id_nganh,
+    }): Json<SinhVienCreatePayload>,
 ) -> impl IntoResponse {
+    let id_hoc_ky = match sqlx::query_scalar::<_, String>(
+        "select id_hoc_ky from tham_so
+                where id = 1",
+    )
+    .fetch_one(context.pool())
+    .await
+    {
+        Ok(value) => value,
+        Err(error) => {
+            return (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response()
+        }
+    };
+
+    let id_chuong_trinh_hoc = {
+        match sqlx::query_scalar::<_, String>(
+            "select id from chuong_trinh_hoc
+                where id_nganh = $1
+                    and id_hoc_ky = $2",
+        )
+        .bind(id_nganh)
+        .bind(&id_hoc_ky)
+        .fetch_one(context.pool())
+        .await
+        {
+            Ok(value) => value,
+            Err(error) => {
+                return (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response()
+            }
+        }
+    };
+
+    let id = {
+        let sinh_vien_len = match sqlx::query_scalar::<_, i64>(
+            "select count (*) from sinh_vien, chuong_trinh_hoc
+                where sinh_vien.id_chuong_trinh_hoc = chuong_trinh_hoc.id
+                    and chuong_trinh_hoc.id_hoc_ky = $1",
+        )
+        .bind(&id_hoc_ky)
+        .fetch_one(context.pool())
+        .await
+        {
+            Ok(value) => value,
+            Err(error) => {
+                return (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response()
+            }
+        };
+
+        format!("{}{:04}", id_hoc_ky, sinh_vien_len + 1)
+    };
+
     match sqlx::query(
-        "INSERT INTO SINH_VIEN (
+        "insert into sinh_vien (
             id,
             ten,
             ngay_sinh,
@@ -73,59 +129,59 @@ async fn post(
             id_doi_tuong,
             id_chuong_trinh_hoc
         )
-        VALUES (
+        values (
             $1,
             $2,
-            TO_DATE($3, 'YYYY-MM-DD'),
+            to_date($3, 'yyyy-mm-dd'),
             $4,
             $5,
             $6,
             $7
         )",
     )
-    .bind(&payload.id)
-    .bind(&payload.ten)
-    .bind(&payload.ngay_sinh)
-    .bind(&payload.id_gioi_tinh)
-    .bind(&payload.id_que_quan)
-    .bind(&payload.id_doi_tuong)
-    .bind(&payload.id_chuong_trinh_hoc)
+    .bind(&id)
+    .bind(ten)
+    .bind(ngay_sinh)
+    .bind(id_gioi_tinh)
+    .bind(id_que_quan)
+    .bind(id_doi_tuong)
+    .bind(id_chuong_trinh_hoc)
     .execute(context.pool())
     .await
     {
         Ok(_) => (),
         Err(error) => {
-            return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
+            return (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response()
         }
     };
 
-    let password = payload.id.as_bytes();
+    let password = id.as_bytes();
     let salt = SaltString::generate(&mut OsRng);
 
     let argon2 = Argon2::default();
 
     let password_hash = match argon2.hash_password(password, &salt) {
-        Ok(hash) => hash,
+        Ok(value) => value,
         Err(error) => {
-            return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
+            return (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response()
         }
     }
     .to_string();
 
     match sqlx::query(
-        "INSERT INTO USERS (username, password)
-            VALUES (
+        "insert into users (username, password)
+            values (
                 $1,
                 $2
             )",
     )
-    .bind(payload.id.as_str())
+    .bind(id.as_str())
     .bind(password_hash.as_str())
     .execute(context.pool())
     .await
     {
         Ok(_) => (StatusCode::CREATED).into_response(),
-        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response(),
+        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response(),
     }
 }
 
@@ -174,7 +230,7 @@ async fn patch(
     .bind(&payload.id_gioi_tinh)
     .bind(&payload.id_que_quan)
     .bind(&payload.id_doi_tuong)
-    .bind(&payload.id_chuong_trinh_hoc)
+    .bind(&payload.id_nganh)
     .execute(context.pool())
     .await
     .unwrap();

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { get_nganh_options } from "$lib/api/get_nganh_options";
   import { get_thanh_pho_options } from "$lib/api/get_thanh_pho_options";
 
   export let tinh_options;
@@ -8,6 +9,7 @@
   let tinh_selected_id: string;
   let khoa_selected_id: string;
   $: thanh_pho_options_json = get_thanh_pho_options(tinh_selected_id);
+  $: nganh_options_json = get_nganh_options(khoa_selected_id);
 </script>
 
 <form method="POST" action="?/create_single_sinh_vien">
@@ -26,12 +28,12 @@
 
   <lable class="label">
     <span>Ngày sinh</span>
-    <input type="date" class="input" />
+    <input type="date" class="input" name="ngay_sinh" />
   </lable>
 
   <lable class="label">
     <span>Quê quán</span>
-    <div>
+    <div class="grid grid-cols-2 gap-4">
       <label class="lable">
         <span>Tỉnh</span>
         <select class="select" bind:value={tinh_selected_id}>
@@ -64,5 +66,29 @@
     </select>
   </label>
 
-  <button type="submit" class="btn variant-filled">Tạo</button>
+  <label class="label">
+    <span>Khoa</span>
+    <select class="select" bind:value={khoa_selected_id}>
+      {#each khoa_options as khoa_option}
+        <option value={khoa_option.id}>{khoa_option.ten}</option>
+      {/each}
+    </select>
+  </label>
+
+  <lable class="label">
+    <span>Ngành</span>
+    <select class="select" name="id_nganh" disabled={!khoa_selected_id}>
+      {#await nganh_options_json then nganh_options}
+        {#each nganh_options as nganh_option}
+          <option value={nganh_option.id}>{nganh_option.ten}</option>
+        {/each}
+      {/await}
+    </select>
+  </lable>
+
+  <div class="flex flex-col">
+    <button type="submit" class="btn variant-filled mx-auto mt-4 px-8"
+      >Tạo</button
+    >
+  </div>
 </form>

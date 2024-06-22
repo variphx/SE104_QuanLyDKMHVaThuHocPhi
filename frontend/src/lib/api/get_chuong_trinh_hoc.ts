@@ -14,10 +14,5 @@ export const get_chuong_trinh_hoc = async (id: string) => {
     throw new Error(await response.text());
   }
 
-  const data = await response.json();
-
-  return {
-    id_nganh: data.id_nganh,
-    id_hoc_ky: data.id_hoc_ky,
-  };
+  return response.json();
 };

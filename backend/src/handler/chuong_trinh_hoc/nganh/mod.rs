@@ -5,7 +5,9 @@ use crate::context::Context;
 mod options;
 
 pub fn router() -> Router<Context> {
-    Router::new().route("/get", axum::routing::post(get))
+    Router::new()
+        .route("/get", axum::routing::post(get))
+        .nest("/options", options::router())
 }
 
 #[derive(serde::Serialize, sqlx::FromRow)]

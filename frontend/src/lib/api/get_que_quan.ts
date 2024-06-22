@@ -11,10 +11,5 @@ export const get_que_quan = async (id: string) => {
     throw new Error(await response.text());
   }
 
-  const data = await response.json();
-
-  return {
-    thanh_pho: data.thanh_pho,
-    tinh: data.tinh,
-  };
+  return response.json();
 };

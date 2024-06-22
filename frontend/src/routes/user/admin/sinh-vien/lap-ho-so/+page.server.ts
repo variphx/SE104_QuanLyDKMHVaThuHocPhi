@@ -35,6 +35,14 @@ export const actions: Actions = {
       !id_doi_tuong ||
       !id_nganh
     ) {
+      console.log(
+        ten,
+        ngay_sinh,
+        id_gioi_tinh,
+        id_que_quan,
+        id_doi_tuong,
+        id_nganh
+      );
       throw new Error("undefined: form data");
     }
 

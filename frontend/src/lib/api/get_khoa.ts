@@ -11,9 +11,5 @@ export const get_khoa = async (id: string) => {
     throw new Error(await response.text());
   }
 
-  const data = await response.json();
-
-  return {
-    ten: data.ten,
-  };
+  return response.json();
 };
