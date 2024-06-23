@@ -123,7 +123,7 @@ values
 insert into
     sinh_vien (id, ten, ngay_sinh, id_gioi_tinh, id_que_quan, id_doi_tuong, id_chuong_trinh_hoc)
 values
-    ('20220001', 'Huỳnh Anh Dũng', '2004-09-06', 'Nam', '568', '_default', 'CSCQ202201');
+    ('2022010001', 'Huỳnh Anh Dũng', '2004-09-06', 'Nam', '568', '_default', 'CSCQ202201');
 
 insert into
     mon_hoc (id, id_khoa, ten, loai, so_tiet, so_tin_chi)

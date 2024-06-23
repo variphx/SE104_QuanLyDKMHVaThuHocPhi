@@ -17,7 +17,7 @@
   const rows = handler.getRows();
 </script>
 
-<div class=" overflow-x-auto space-y-2">
+<div class="table-container overflow-x-auto space-y-2">
   <header class="flex justify-between">
     <Search {handler} />
     <RowsPerPage {handler} />
