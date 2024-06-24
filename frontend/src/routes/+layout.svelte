@@ -5,7 +5,6 @@
   import hljs from "highlight.js/lib/core";
   import "highlight.js/styles/github-dark.css";
   import {
-    AppBar,
     Modal,
     Toast,
     initializeStores,
@@ -37,7 +36,7 @@
   initializeStores();
 </script>
 
-<Toast />
-<Modal />
+<Toast></Toast>
+<Modal></Modal>
 
 <slot />

@@ -8,5 +8,26 @@
 </script>
 
 <div class="table-container">
-  <div class="table table-hover"></div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th> Mã ngành </th>
+        <th> Tên ngành </th>
+        <th> Xóa </th>
+      </tr>
+    </thead>
+    <tbody>
+      {#each nganhs as nganh}
+        <tr>
+          <td>
+            {nganh.id}
+          </td>
+          <td>
+            {nganh.ten}
+          </td>
+          <td> fdslfdj </td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
 </div>

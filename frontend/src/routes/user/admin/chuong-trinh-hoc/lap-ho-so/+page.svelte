@@ -6,4 +6,4 @@
   const nganhs = data.nganhs;
 </script>
 
-  <ChuongTrinhHocCreateForm {nganhs}></ChuongTrinhHocCreateForm>
+<ChuongTrinhHocCreateForm {nganhs}></ChuongTrinhHocCreateForm>
