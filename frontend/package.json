@@ -22,7 +22,6 @@
 		"@tailwindcss/typography": "0.5.13",
 		"@types/eslint": "^8.56.7",
 		"@types/node": "20.14.8",
-		"@vincjo/datatables": "^1.14.10",
 		"autoprefixer": "10.4.19",
 		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
@@ -43,6 +42,7 @@
 	"type": "module",
 	"dependencies": {
 		"@floating-ui/dom": "1.6.6",
+		"@vincjo/datatables": "^1.14.10",
 		"highlight.js": "11.9.0"
 	}
 }

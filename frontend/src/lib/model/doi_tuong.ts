@@ -1,6 +1,6 @@
 export type DoiTuong = {
-	id: String;
-	ten: String;
+	id: string;
+	ten: string;
 };
 
 export const get_doi_tuong_all = async () => {
