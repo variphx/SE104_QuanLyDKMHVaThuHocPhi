@@ -8,6 +8,7 @@ mod nganh;
 
 #[derive(Serialize, sqlx::FromRow)]
 struct ChuongTrinhHoc {
+    id: String,
     id_hoc_ky: String,
     id_nganh: String,
 }
@@ -21,6 +22,7 @@ struct ChuongTrinhHocCreatePayload {
 pub fn router() -> Router<Context> {
     Router::new()
         .route("/get", axum::routing::post(get))
+        .route("/get/all", axum::routing::get(get_all))
         .route("/post", axum::routing::post(post))
         .nest("/nganh", nganh::router())
         .nest("/khoa", khoa::router())
@@ -28,15 +30,27 @@ pub fn router() -> Router<Context> {
 
 async fn get(State(context): State<Context>, Json(id): Json<String>) -> impl IntoResponse {
     match sqlx::query_as::<_, ChuongTrinhHoc>(
-        "select id_hoc_ky, id_nganh from chuong_trinh_hoc
+        "select id, id_hoc_ky, id_nganh from chuong_trinh_hoc
             where id = $1",
     )
     .bind(&id)
     .fetch_one(context.pool())
     .await
     {
-        Ok(chuong_trinh_hoc) => Json(chuong_trinh_hoc).into_response(),
-        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response(),
+        Ok(x) => Json(x).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
+}
+
+async fn get_all(State(context): State<Context>) -> impl IntoResponse {
+    match sqlx::query_as::<_, ChuongTrinhHoc>(
+        "select id, id_hoc_ky, id_nganh from chuong_trinh_hoc",
+    )
+    .fetch_all(context.pool())
+    .await
+    {
+        Ok(x) => Json(x).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
     }
 }
 

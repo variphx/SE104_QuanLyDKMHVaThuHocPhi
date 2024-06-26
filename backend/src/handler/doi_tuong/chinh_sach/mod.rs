@@ -1,4 +1,4 @@
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use serde::Deserialize;
 
 use crate::context::Context;
@@ -58,5 +58,24 @@ pub async fn post(
     {
         Ok(_) => Ok(StatusCode::CREATED),
         Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
+#[derive(serde::Serialize, sqlx::FromRow)]
+struct DoiTuong {
+    id: String,
+    ten: String,
+}
+
+pub async fn get_all(State(context): State<Context>) -> impl IntoResponse {
+    match sqlx::query_as::<_, DoiTuong>(
+        "select doi_tuong.id, doi_tuong.ten from doi_tuong, doi_tuong_chinh_sach
+            where doi_tuong.id = doi_tuong_chinh_sach.id",
+    )
+    .fetch_all(context.pool())
+    .await
+    {
+        Ok(x) => Json(x).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
     }
 }

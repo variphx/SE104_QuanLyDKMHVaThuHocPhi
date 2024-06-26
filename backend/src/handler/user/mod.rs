@@ -1,14 +1,14 @@
-use argon2::{password_hash::SaltString, Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use argon2::{password_hash::SaltString, Argon2, PasswordHasher};
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json, Router};
 use rand::rngs::OsRng;
 use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize, sqlx::FromRow)]
 struct User {
     username: String,
-    password: String,
+    hash_pwd: String,
 }
 
 #[derive(Deserialize)]
@@ -26,21 +26,24 @@ async fn get(
     State(context): State<Context>,
     Json(UserLoginPayload(username)): Json<UserLoginPayload>,
 ) -> impl IntoResponse {
-    match sqlx::query_scalar::<_, String>(
-        "SELECT password FROM USERS
-            WHERE username = $1",
+    match sqlx::query_as::<_, User>(
+        "select username, password as hash_pwd from users
+            where username = $1",
     )
     .bind(username.as_str())
     .fetch_one(context.pool())
     .await
     {
-        Ok(password_hash) => Json(password_hash).into_response(),
-        Err(error) => (StatusCode::NOT_FOUND, format!("{:?}", error)).into_response(),
+        Ok(x) => Json(x).into_response(),
+        Err(error) => (StatusCode::NOT_FOUND, error.to_string()).into_response(),
     }
 }
 
 async fn post(State(context): State<Context>, Json(user): Json<User>) -> Result<(), StatusCode> {
-    let User { username, password } = user;
+    let User {
+        username,
+        hash_pwd: password,
+    } = user;
 
     let salt = SaltString::generate(&mut OsRng);
     let argon2 = Argon2::default();
@@ -66,7 +69,10 @@ async fn post(State(context): State<Context>, Json(user): Json<User>) -> Result<
 }
 
 async fn patch(State(context): State<Context>, Json(user): Json<User>) -> Result<(), StatusCode> {
-    let User { username, password } = user;
+    let User {
+        username,
+        hash_pwd: password,
+    } = user;
 
     let username = sqlx::query_scalar::<_, String>(
         "SELECT username FROM USERS

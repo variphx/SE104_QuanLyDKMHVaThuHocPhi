@@ -28,6 +28,7 @@ pub fn router() -> Router<Context> {
         .route("/patch", axum::routing::post(patch))
         .route("/delete", axum::routing::post(delete))
         .route("/chinh-sach/post", axum::routing::post(chinh_sach::post))
+        .route("/chinh-sach/get/all", axum::routing::get(chinh_sach::get_all))
         .route("/vung-mien/post", axum::routing::post(vung_mien::post))
         .nest("/options", options::router())
 }

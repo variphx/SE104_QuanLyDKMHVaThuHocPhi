@@ -1,4 +1,5 @@
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Json, Router};
+use serde::{Deserialize, Serialize};
 
 use crate::context::Context;
 
@@ -8,9 +9,15 @@ pub fn router() -> Router<Context> {
         .route("/post", axum::routing::post(post))
 }
 
-#[derive(serde::Deserialize)]
+#[derive(Deserialize)]
 struct SessionCreatePayload {
-    session_id: i64,
+    id: String,
+    username: String,
+}
+
+#[derive(Serialize, sqlx::FromRow)]
+struct Session {
+    id: String,
     username: String,
 }
 
@@ -18,7 +25,7 @@ async fn post(
     State(context): State<Context>,
     Json(SessionCreatePayload {
         username,
-        session_id,
+        id: session_id,
     }): Json<SessionCreatePayload>,
 ) -> impl IntoResponse {
     match sqlx::query(
@@ -38,16 +45,16 @@ async fn post(
     }
 }
 
-async fn get(State(context): State<Context>, Json(session_id): Json<i64>) -> impl IntoResponse {
-    match sqlx::query_scalar::<_, String>(
-        "select username from session
+async fn get(State(context): State<Context>, Json(id): Json<String>) -> impl IntoResponse {
+    match sqlx::query_as::<_, Session>(
+        "select id, username from session
             where id = $1",
     )
-    .bind(session_id)
+    .bind(id)
     .fetch_one(context.pool())
     .await
     {
-        Ok(value) => Json(value).into_response(),
+        Ok(x) => Json(x).into_response(),
         Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response(),
     }
 }

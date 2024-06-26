@@ -8,7 +8,7 @@ create table
 
 create table
     session (
-        id bigint,
+        id text,
         username text not null,
         primary key (id),
         foreign key (username) references users (username)

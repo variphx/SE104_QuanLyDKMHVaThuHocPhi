@@ -21,15 +21,12 @@ export const actions: Actions = {
 		}
 
 		const user = await get_user(username);
+		console.log(user.hash_pwd);
 
 		if (await verify(user.hash_pwd, password)) {
 			await set_cookies_session_id(cookies, username);
 			redirect(302, `/user/${username}`);
 		}
-
-        return {
-            is_
-        }
 	}
 };
 

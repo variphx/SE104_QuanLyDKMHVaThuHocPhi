@@ -25,7 +25,7 @@ struct SinhVienCreatePayload {
     id_gioi_tinh: String,
     id_que_quan: String,
     id_doi_tuong: String,
-    id_nganh: String,
+    id_chuong_trinh_hoc: String,
 }
 
 #[derive(Deserialize)]
@@ -68,30 +68,14 @@ async fn post(
         id_gioi_tinh,
         id_que_quan,
         id_doi_tuong,
-        id_nganh,
+        id_chuong_trinh_hoc,
     }): Json<SinhVienCreatePayload>,
 ) -> impl IntoResponse {
-    let id_hoc_ky = match sqlx::query_scalar::<_, String>(
-        "select id_hoc_ky from tham_so
+    let id = {
+        let id_hoc_ky = match sqlx::query_scalar::<_, String>(
+            "select id_hoc_ky from tham_so
                 where id = 1",
-    )
-    .fetch_one(context.pool())
-    .await
-    {
-        Ok(value) => value,
-        Err(error) => {
-            return (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response()
-        }
-    };
-
-    let id_chuong_trinh_hoc = {
-        match sqlx::query_scalar::<_, String>(
-            "select id from chuong_trinh_hoc
-                where id_nganh = $1
-                    and id_hoc_ky = $2",
         )
-        .bind(id_nganh)
-        .bind(&id_hoc_ky)
         .fetch_one(context.pool())
         .await
         {
@@ -99,10 +83,8 @@ async fn post(
             Err(error) => {
                 return (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response()
             }
-        }
-    };
+        };
 
-    let id = {
         let sinh_vien_len = match sqlx::query_scalar::<_, i64>(
             "select count (*) from sinh_vien, chuong_trinh_hoc
                 where sinh_vien.id_chuong_trinh_hoc = chuong_trinh_hoc.id
@@ -232,7 +214,7 @@ async fn patch(
     .bind(&payload.id_gioi_tinh)
     .bind(&payload.id_que_quan)
     .bind(&payload.id_doi_tuong)
-    .bind(&payload.id_nganh)
+    .bind(&payload.id_chuong_trinh_hoc)
     .execute(context.pool())
     .await
     .unwrap();
