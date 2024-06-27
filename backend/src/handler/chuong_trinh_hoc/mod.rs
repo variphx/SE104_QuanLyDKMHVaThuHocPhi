@@ -58,13 +58,17 @@ async fn post(
     State(context): State<Context>,
     Json(payload): Json<ChuongTrinhHocCreatePayload>,
 ) -> impl IntoResponse {
+    let id = format!("{}{}", payload.id_nganh, payload.id_hoc_ky);
+
     match sqlx::query(
-        "insert into chuong_trinh_hoc (id_nganh, id_hoc_ky)
+        "insert into chuong_trinh_hoc (id, id_nganh, id_hoc_ky)
             values (
                 $1,
-                $2
+                $2,
+                $3
             )",
     )
+    .bind(id)
     .bind(payload.id_nganh)
     .bind(payload.id_hoc_ky)
     .execute(context.pool())

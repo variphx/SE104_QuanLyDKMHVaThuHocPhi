@@ -1,37 +1,36 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import type { PageServerData } from './$types';
 
-	const ten_hoc_kys: string[] = ['Một', 'Hai', 'Hè'];
+	export let data: PageServerData;
 </script>
 
 <form method="POST" action="?/tao" use:enhance>
-	<label class="label">
-		<span> Mã ngành </span>
-		<input class="input" type="text" name="id_nganh" />
-	</label>
+	<div class="grid grid-cols-2 gap-4">
+		<label class="label">
+			<span> Học kỳ </span>
+			<input
+				class="input"
+				disabled
+				value={`Học kỳ ${data.current_hoc_ky.ten}, Năm học ${data.current_hoc_ky.nam_hoc}`}
+			/>
+		</label>
 
-	<label class="label">
-		<span> Tên ngành </span>
-		<input class="input" type="text" name="ten_nganh" />
-	</label>
-
-	<label class="label">
-		<span> Năm nhập học </span>
-		<input class="input" type="number" />
-	</label>
-
-	<label class="label">
-		<span> Học kì nhập học </span>
-		<select class="select">
-			{#each ten_hoc_kys as ten_hoc_ky}
-				<option value={ten_hoc_ky}>
-					{ten_hoc_ky}
-				</option>
-			{/each}
-		</select>
-	</label>
+		<label class="label">
+			<span> Mật khẩu </span>
+			<input class="input" type="password" name="password" />
+		</label>
+	</div>
 
 	<div class="flex flex-col items-center mt-4">
-		<button type="submit" class="btn variant-filled">Tạo chương trình học</button>
+		<button class="btn variant-filled" type="submit"> Tạo chương trình học </button>
+	</div>
+
+	<div class="flex flex-col items-center mt-16 gap-4">
+		{#each data.nganhs as nganh (nganh.id)}
+			<div class="bg-surface-500 outline-surface-300 outline w-1/2 p-4 rounded">
+				{nganh.ten}
+			</div>
+		{/each}
 	</div>
 </form>

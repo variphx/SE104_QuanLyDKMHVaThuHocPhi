@@ -1,6 +1,7 @@
 import { get_chuong_trinh_hoc_all } from '$lib/model/chuong_trinh_hoc';
 import { get_doi_tuong_all } from '$lib/model/doi_tuong';
 import { get_que_quan_all } from '$lib/model/que_quan';
+import { hash } from '@node-rs/argon2';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -43,6 +44,24 @@ export const actions: Actions = {
 
 		if (!response.ok) {
 			throw new Error(await response.text());
+		}
+
+		const username = await response.json();
+		const hash_pwd = await hash(username);
+
+		const user_response = await fetch('http://localhost:8080/api/user/post', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				username,
+				hash_pwd
+			})
+		});
+
+		if (!user_response.ok) {
+			throw new Error(await user_response.text());
 		}
 	}
 };

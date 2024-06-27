@@ -3,7 +3,6 @@ use axum::{extract::State, http::StatusCode, response::IntoResponse, Json, Route
 use crate::context::Context;
 
 mod all;
-mod options;
 
 pub fn router() -> Router<Context> {
     Router::new()

@@ -44,7 +44,7 @@
 </script>
 
 <div class="grid grid-cols-[auto_1fr]">
-	<AppRail class="h-[1fr]">
+	<AppRail class="h-screen">
 		{#each paths as path}
 			<AppRailAnchor href={path.url} selected={$page.url.pathname === path.url}>
 				{path.name}

@@ -39,33 +39,25 @@ async fn get(
     }
 }
 
-async fn post(State(context): State<Context>, Json(user): Json<User>) -> Result<(), StatusCode> {
-    let User {
-        username,
-        hash_pwd: password,
-    } = user;
-
-    let salt = SaltString::generate(&mut OsRng);
-    let argon2 = Argon2::default();
-    let password_hash = argon2
-        .hash_password(password.as_bytes(), &salt)
-        .unwrap()
-        .to_string();
-
-    sqlx::query(
-        "INSERT INTO USERS (username, password)
-            VALUES (
-                $1,
-                $2
-            )",
+async fn post(
+    State(context): State<Context>,
+    Json(User { username, hash_pwd }): Json<User>,
+) -> impl IntoResponse {
+    match sqlx::query(
+        "insert into users (username, password)
+                values (
+                    $1,
+                    $2
+                )",
     )
     .bind(username)
-    .bind(password_hash)
+    .bind(hash_pwd)
     .execute(context.pool())
     .await
-    .unwrap();
-
-    Ok(())
+    {
+        Ok(_) => (StatusCode::CREATED).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
 }
 
 async fn patch(State(context): State<Context>, Json(user): Json<User>) -> Result<(), StatusCode> {

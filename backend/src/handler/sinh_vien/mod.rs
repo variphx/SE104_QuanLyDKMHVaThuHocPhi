@@ -139,34 +139,7 @@ async fn post(
         }
     };
 
-    let password = id.as_bytes();
-    let salt = SaltString::generate(&mut OsRng);
-
-    let argon2 = Argon2::default();
-
-    let password_hash = match argon2.hash_password(password, &salt) {
-        Ok(value) => value,
-        Err(error) => {
-            return (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response()
-        }
-    }
-    .to_string();
-
-    match sqlx::query(
-        "insert into users (username, password)
-            values (
-                $1,
-                $2
-            )",
-    )
-    .bind(id.as_str())
-    .bind(password_hash.as_str())
-    .execute(context.pool())
-    .await
-    {
-        Ok(_) => (StatusCode::CREATED).into_response(),
-        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response(),
-    }
+    Json(id).into_response()
 }
 
 async fn patch(

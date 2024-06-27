@@ -10,6 +10,7 @@ struct MonHoc {
     ten: String,
     loai: String,
     so_tiet: i64,
+    so_tin_chi: i16,
 }
 
 #[derive(Deserialize)]
@@ -46,14 +47,14 @@ async fn get(
 ) -> impl IntoResponse {
     match sqlx::query_as::<_, MonHoc>(
         "select * from mon_hoc
-                where id = $1",
+            where id = $1",
     )
     .bind(payload.id)
     .fetch_one(context.pool())
     .await
     {
         Ok(value) => Json(value).into_response(),
-        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response(),
+        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, error.to_string()).into_response(),
     }
 }
 
@@ -61,7 +62,10 @@ async fn post(
     State(context): State<Context>,
     Json(payload): Json<MonHocCreatePayload>,
 ) -> impl IntoResponse {
-    let so_tiet = payload.so_tiet.parse::<i64>().unwrap();
+    let so_tiet = match payload.so_tiet.parse::<i64>() {
+        Ok(x) => x,
+        Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    };
 
     let so_tin_chi = {
         let he_so_tin_chi_lt = match sqlx::query_scalar::<_, i16>(
@@ -71,10 +75,8 @@ async fn post(
         .fetch_one(context.pool())
         .await
         {
-            Ok(value) => value,
-            Err(error) => {
-                return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
-            }
+            Ok(x) => x,
+            Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
         };
 
         let he_so_tin_chi_th = match sqlx::query_scalar::<_, i16>(
@@ -84,10 +86,8 @@ async fn post(
         .fetch_one(context.pool())
         .await
         {
-            Ok(value) => value,
-            Err(error) => {
-                return (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response()
-            }
+            Ok(x) => x,
+            Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
         };
 
         so_tiet
@@ -119,7 +119,7 @@ async fn post(
     .await
     {
         Ok(_) => (StatusCode::CREATED).into_response(),
-        Err(error) => (StatusCode::INTERNAL_SERVER_ERROR, format!("{:?}", error)).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
     }
 }
 
